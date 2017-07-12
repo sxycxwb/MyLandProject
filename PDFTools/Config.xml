@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config>
+  <!--发包方关键字定义-->
+  <FBF>
+    <!--发包方调查表-->
+    <value desc="发包方调查表">FBFDCB</value>
+    
+    <!--发包方名称-->
+    <value desc="发包方名称">FBFMC</value>
+
+    <!--发包方负责人-->
+    <value desc="发包方负责人">FBFFZR</value>
+
+    <!--发包方调查记事-->
+    <value desc="发包方调查记事">FBFDCJS</value>
+
+    <!--承包经营权调查信息公示表-->
+    <value desc="承包经营权调查信息公示表">CBJYQDCGSB</value>
+
+    <!--工图作底-->
+    <value desc="工图作底">GZDT</value>
+
+    <!--公示资料-->
+    <value desc="公示资料">GSZL</value>
+    
+  </FBF>
+
+  <!--承包关键字定义-->
+  <CBF>
+    <!--承包方调查表-->
+    <value desc="承包方调查表">CBFDCB</value>
+
+    <!--承包方(代表)-->
+    <value desc="承包方(代表)">CBFMC</value>
+
+    <!--承包方家庭成员-->
+    <value desc="承包方家庭成员">CBFJTCY</value>
+
+    <!--承包方调查记事-->
+    <value desc="承包方调查记事">CBFDCJS</value>
+
+    <!--承包地块调查表-->
+    <value desc="承包地块调查表">CBFDKDCB</value>
+
+    <!--承包地块草图-->
+    <value desc="承包地块草图">CBFDKCT</value>
+
+    <!--承包地块调查记事-->
+    <value desc="承包地块调查记事">CBFDDCJS</value>
+
+    <!--承包经营权调查核实表-->
+    <value desc="承包经营权调查核实表">CBJYQDCHSB</value>
+
+    <!--承包经营权工作结果归户表-->
+    <value desc="承包经营权工作结果归户表">CBJYQGHB</value>
+
+    <!--承包合同-->
+    <value desc="承包合同">CBHT</value>
+
+    <!--摸底调查表-->
+    <value desc="摸底调查表">MDDCB</value>
+
+    <!--二轮承包清册-->
+    <value desc="二轮承包清册">ELQC</value>
+  </CBF>
+</Config>

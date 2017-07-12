@@ -3,3 +3,7 @@
 ################################################################################
 
 /packages/iTextSharp.5.5.11
+/PDFTools/.vs/PDFTools/v14
+/PDFTools/bin/Debug
+/PDFTools/obj/Debug
+/.vs/Spring.PdfTools/v14
