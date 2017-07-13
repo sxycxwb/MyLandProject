@@ -24,7 +24,7 @@ namespace PDFTools
         private int pdfCount = 0;//pdf文件总数
         private int photoCount = 0;//图片总数
         private int level;//目录级别
-        private Dictionary<string, List<string>> plotDict = new Dictionary<string, List<string>>(); 
+        private Dictionary<string, List<string>> plotDict = new Dictionary<string, List<string>>();
 
         public Form1()
         {
@@ -443,7 +443,7 @@ namespace PDFTools
             string rootPath = Path.Combine(makePath, fbfName);
 
             CreateDir(rootPath);
-           
+
 
             //2.创建发包方文件夹及子文件夹
             string fbfPath = Path.Combine(rootPath, "发包方");
@@ -481,11 +481,14 @@ namespace PDFTools
                 //处理地块编码信息
                 var plotKey = cbfPlotDict.First().Key;
                 var plotValue = cbfPlotDict.First().Value;
-                var plotList = plotDict[fbfFullCode];//通过承包方代码查找地块编码
-                foreach (var plotCode in plotList)
+                if (plotDict.ContainsKey(fbfFullCode))
                 {
-                    string dir = Path.Combine(singlecbfPath, plotValue + " # " + plotKey + plotCode);
-                    CreateDir(dir);
+                    var plotList = plotDict[fbfFullCode]; //通过承包方代码查找地块编码
+                    foreach (var plotCode in plotList)
+                    {
+                        string dir = Path.Combine(singlecbfPath, plotValue + " # " + plotKey + plotCode);
+                        CreateDir(dir);
+                    }
                 }
             }
             #endregion
@@ -529,7 +532,7 @@ namespace PDFTools
                 else
                 {
                     var list = plotDict[cbfCode];
-                    if(!list.Contains(plotCode))
+                    if (!list.Contains(plotCode))
                         list.Add(plotCode);
                     plotDict[cbfCode] = list;
                 }
@@ -542,9 +545,10 @@ namespace PDFTools
         private void ShowErrorMsg()
         {
             var sb = new StringBuilder();
-            string fbfCode = txtFBFCode.Text.Trim();
+
             for (int i = 0; i < dataGridView1.Rows.Count - 1; i++)
             {
+                string fbfCode = txtFBFCode.Text.Trim();
                 var row = dataGridView1.Rows[i];
                 string fbfGroupName = row.Cells[0].Value.ToString();
                 string cbfBigCode = row.Cells[2].Value.ToString();
@@ -557,7 +561,7 @@ namespace PDFTools
                     string fbfSingleCode = fbfCode + cbfSimpleCode;
                     if (!plotDict.ContainsKey(fbfSingleCode))//判断地块编码字典中是否存在该承包方户信息，不存在，则添加错误信息
                     {
-                        sb.AppendFormat("村信息：【{0}】,组信息：【{1}】,户信息【{2}】不存在界址点成果表，请检查数据！", txtCountryName.Text.Trim(),
+                        sb.AppendFormat("村信息：【{0}】,组信息：【{1}】,户信息【{2}】不存在界址点成果表，请检查数据！\r\n", txtCountryName.Text.Trim(),
                             fbfGroupName, cbfSimpleCode);
                     }
                 }
