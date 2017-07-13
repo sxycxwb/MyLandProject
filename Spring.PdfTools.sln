@@ -5,6 +5,10 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDFTools", "PDFTools\PDFTools.csproj", "{C3D74368-16A8-4C90-AB0A-DB04E32498D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTools", "TestTools\TestTools.csproj", "{71E47765-B1C2-44C1-AB93-7314B9D9D20D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityCode", "UtilityCode\UtilityCode.csproj", "{05B348D9-E292-4AEA-BDE4-56DDDA725599}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{C3D74368-16A8-4C90-AB0A-DB04E32498D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3D74368-16A8-4C90-AB0A-DB04E32498D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3D74368-16A8-4C90-AB0A-DB04E32498D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71E47765-B1C2-44C1-AB93-7314B9D9D20D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71E47765-B1C2-44C1-AB93-7314B9D9D20D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71E47765-B1C2-44C1-AB93-7314B9D9D20D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71E47765-B1C2-44C1-AB93-7314B9D9D20D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05B348D9-E292-4AEA-BDE4-56DDDA725599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05B348D9-E292-4AEA-BDE4-56DDDA725599}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05B348D9-E292-4AEA-BDE4-56DDDA725599}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05B348D9-E292-4AEA-BDE4-56DDDA725599}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

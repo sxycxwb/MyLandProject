@@ -7,3 +7,8 @@
 /PDFTools/bin/Debug
 /PDFTools/obj/Debug
 /.vs/Spring.PdfTools/v14
+/packages
+/TestTools/bin/Debug
+/TestTools/obj/Debug
+/UtilityCode/bin/Debug
+/UtilityCode/obj/Debug

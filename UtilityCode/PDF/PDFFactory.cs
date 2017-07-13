@@ -5,7 +5,7 @@ using System.IO;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 
-namespace PDFTools
+namespace UtilityCode
 {
     public class PDFFactory
     {

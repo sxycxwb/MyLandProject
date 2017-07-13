@@ -57,6 +57,10 @@
             this.btnSetPath = new System.Windows.Forms.Button();
             this.txtCombinePath = new System.Windows.Forms.TextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.txtErrorMsg = new System.Windows.Forms.TextBox();
+            this.txtPlotPath = new System.Windows.Forms.TextBox();
+            this.btnSelectPlotCode = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -87,9 +91,14 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.Gainsboro;
+            this.groupBox1.Controls.Add(this.label8);
+            this.groupBox1.Controls.Add(this.btnSelectPlotCode);
+            this.groupBox1.Controls.Add(this.txtPlotPath);
+            this.groupBox1.Controls.Add(this.txtErrorMsg);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.groupBox3);
             this.groupBox1.Controls.Add(this.txtFBFCode);
+            this.groupBox1.Controls.Add(this.btnMakeDir);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.txtCountryName);
@@ -99,7 +108,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox1.Size = new System.Drawing.Size(770, 317);
+            this.groupBox1.Size = new System.Drawing.Size(770, 465);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "1.生成文件夹";
@@ -122,7 +131,6 @@
             this.groupBox3.Controls.Add(this.dataGridView1);
             this.groupBox3.Controls.Add(this.txtGroupName);
             this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Controls.Add(this.btnMakeDir);
             this.groupBox3.Controls.Add(this.txtGroupNum);
             this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.label2);
@@ -207,12 +215,12 @@
             // 
             // btnMakeDir
             // 
-            this.btnMakeDir.Location = new System.Drawing.Point(631, 170);
+            this.btnMakeDir.Location = new System.Drawing.Point(648, 429);
             this.btnMakeDir.Margin = new System.Windows.Forms.Padding(2);
             this.btnMakeDir.Name = "btnMakeDir";
             this.btnMakeDir.Size = new System.Drawing.Size(108, 28);
             this.btnMakeDir.TabIndex = 23;
-            this.btnMakeDir.Text = "③ 生成文件夹";
+            this.btnMakeDir.Text = "④ 生成文件夹";
             this.btnMakeDir.UseVisualStyleBackColor = true;
             this.btnMakeDir.Click += new System.EventHandler(this.btnMakeDir_Click);
             // 
@@ -296,7 +304,7 @@
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.btnSetPath);
             this.groupBox2.Controls.Add(this.txtCombinePath);
-            this.groupBox2.Location = new System.Drawing.Point(14, 329);
+            this.groupBox2.Location = new System.Drawing.Point(14, 477);
             this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
@@ -364,11 +372,50 @@
             this.backgroundWorker1.WorkerSupportsCancellation = true;
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
+            // txtErrorMsg
+            // 
+            this.txtErrorMsg.Location = new System.Drawing.Point(27, 354);
+            this.txtErrorMsg.Margin = new System.Windows.Forms.Padding(2);
+            this.txtErrorMsg.Multiline = true;
+            this.txtErrorMsg.Name = "txtErrorMsg";
+            this.txtErrorMsg.Size = new System.Drawing.Size(596, 103);
+            this.txtErrorMsg.TabIndex = 19;
+            // 
+            // txtPlotPath
+            // 
+            this.txtPlotPath.Location = new System.Drawing.Point(38, 319);
+            this.txtPlotPath.Margin = new System.Windows.Forms.Padding(2);
+            this.txtPlotPath.Name = "txtPlotPath";
+            this.txtPlotPath.Size = new System.Drawing.Size(391, 21);
+            this.txtPlotPath.TabIndex = 20;
+            // 
+            // btnSelectPlotCode
+            // 
+            this.btnSelectPlotCode.Location = new System.Drawing.Point(470, 314);
+            this.btnSelectPlotCode.Margin = new System.Windows.Forms.Padding(2);
+            this.btnSelectPlotCode.Name = "btnSelectPlotCode";
+            this.btnSelectPlotCode.Size = new System.Drawing.Size(153, 29);
+            this.btnSelectPlotCode.TabIndex = 26;
+            this.btnSelectPlotCode.Text = "③ 选择界址点成果表目录";
+            this.btnSelectPlotCode.UseVisualStyleBackColor = true;
+            this.btnSelectPlotCode.Click += new System.EventHandler(this.btnSelectPlotCode_Click);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("方正兰亭超细黑简体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label8.ForeColor = System.Drawing.Color.DarkRed;
+            this.label8.Location = new System.Drawing.Point(628, 401);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(132, 18);
+            this.label8.TabIndex = 27;
+            this.label8.Text = "← 错误消息提示";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(797, 485);
+            this.ClientSize = new System.Drawing.Size(796, 631);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -415,6 +462,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn GroupNum;
         private System.Windows.Forms.DataGridViewTextBoxColumn CBFMaxCode;
         private System.Windows.Forms.DataGridViewLinkColumn delete;
+        private System.Windows.Forms.TextBox txtErrorMsg;
+        private System.Windows.Forms.TextBox txtPlotPath;
+        private System.Windows.Forms.Button btnSelectPlotCode;
+        private System.Windows.Forms.Label label8;
     }
 }
 

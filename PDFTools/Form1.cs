@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Xml;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using UtilityCode;
 
 namespace PDFTools
 {
@@ -23,6 +24,7 @@ namespace PDFTools
         private int pdfCount = 0;//pdf文件总数
         private int photoCount = 0;//图片总数
         private int level;//目录级别
+        private Dictionary<string, List<string>> plotDict = new Dictionary<string, List<string>>(); 
 
         public Form1()
         {
@@ -38,6 +40,32 @@ namespace PDFTools
             {
                 string foldPath = dialog.SelectedPath;
                 txtWorkPath.Text = foldPath;
+            }
+            //140802203201 01 0051
+
+            //140802203201 01 00256
+
+            //界址点成果表目录中是否包含了本次操作所有村组的数据
+            //所有村组户界址点成果表数据是否都在同一个目录下
+        }
+
+        private void btnSelectPlotCode_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.Rows.Count <= 1)
+            {
+                MessageBox.Show("尚未添加组信息！");
+                return;
+            }
+
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            dialog.Description = "请选择界址点成果表操作目录";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                string foldPath = dialog.SelectedPath;
+                txtPlotPath.Text = foldPath;
+
+                GetPlotCodeDict(foldPath);
+                ShowErrorMsg();
             }
         }
 
@@ -60,7 +88,7 @@ namespace PDFTools
                 {
                     dirList.Add(ii.FullName);
                 }
-            } 
+            }
             #endregion
             foreach (var str in dirList)
             {
@@ -81,7 +109,7 @@ namespace PDFTools
                     }
                     string pdfN = dirName.Split('#')[1].Trim();
                     string newPdfName = Path.Combine(fbfPath, pdfN + ".pdf");
-                    MergePDF(fileArr, newPdfName);
+                    PdfUtility.MergePDF(fileArr, newPdfName);
                     if (ckIsDelete.Checked)
                         Directory.Delete(Path.Combine(fbfPath, dirName), true);
                     currentpdfIndex += fileArr.Length;
@@ -116,7 +144,7 @@ namespace PDFTools
                         }
                         string pdfN = dirName.Split('#')[1].Trim();
                         string newPdfName = Path.Combine(cbfPath, pdfN + ".pdf");
-                        MergePDF(fileArr, newPdfName);
+                        PdfUtility.MergePDF(fileArr, newPdfName);
                         currentpdfIndex += fileArr.Length;
 
                         int progeress = currentpdfIndex * 100 / processTotalCount;
@@ -133,8 +161,6 @@ namespace PDFTools
                 }
                 #endregion
             }
-
-
         }
 
         private void btnMakeDir_Click(object sender, EventArgs e)
@@ -190,7 +216,7 @@ namespace PDFTools
             string groupNum = txtGroupNum.Text.Trim();
             string maxNum = txtCBFBigCode.Text.Trim();
 
-            dataGridView1.Rows.Add(groupName, groupNum, maxNum,"删除");
+            dataGridView1.Rows.Add(groupName, groupNum, maxNum, "删除");
         }
 
         /// <summary>
@@ -224,7 +250,7 @@ namespace PDFTools
             level = GetDirLevel(path);
             string levelName = level == 2 ? "组级别" : "村级别";
             if (
-                MessageBox.Show(@"已选择【"+levelName+"】目录\r\n操作路径【" + path + "】\r\n包含【" + pdfCount + "】个pdf文件，【" + photoCount + "】个图片文件\r\n是否合并处理为pdf？", "提示信息-操作前请做好备份", MessageBoxButtons.OKCancel,
+                MessageBox.Show(@"已选择【" + levelName + "】目录\r\n操作路径【" + path + "】\r\n包含【" + pdfCount + "】个pdf文件，【" + photoCount + "】个图片文件\r\n是否合并处理为pdf？", "提示信息-操作前请做好备份", MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Question) == DialogResult.OK)
             {
                 processTotalCount = pdfCount + photoCount;
@@ -296,7 +322,7 @@ namespace PDFTools
         private int GetDirLevel(string path)
         {
             var dir = new DirectoryInfo(path);
-           
+
             var dii = dir.GetDirectories();
             if (dii.Length == 0)
                 return 1;
@@ -336,21 +362,6 @@ namespace PDFTools
         }
 
         /// <summary>
-        /// 合并PDF文件
-        /// </summary>
-        /// <param name="files">pdf文件列表</param>
-        /// <param name="outputFilePath">输出路径</param>
-        private void MergePDF(string[] files, string outputFilePath)
-        {
-            PDFFactory pf = new PDFFactory();
-            foreach (string li in files)
-            {
-                pf.AddDocument(li);
-            }
-            pf.Merge(outputFilePath);
-        }
-
-        /// <summary>
         /// 处理文件夹下的图片改为pdf格式
         /// </summary>
         /// <param name="dir"></param>
@@ -363,7 +374,7 @@ namespace PDFTools
                 {
                     string photoPath = file.FullName;
                     string fdfPath = file.FullName.Replace(file.Extension, ".pdf");
-                    ConvertJPG2PDF(photoPath, fdfPath);
+                    PdfUtility.ConvertJPG2PDF(photoPath, fdfPath);
                 }
             }
         }
@@ -417,36 +428,7 @@ namespace PDFTools
             }
         }
 
-        /// <summary>
-        /// 图片转PDF
-        /// </summary>
-        /// <param name="jpgfile"></param>
-        /// <param name="pdf"></param>
-        private void ConvertJPG2PDF(string jpgfile, string pdf)
-        {
-            var document = new Document(iTextSharp.text.PageSize.A4, 25, 25, 25, 25);
-            using (var stream = new FileStream(pdf, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                PdfWriter.GetInstance(document, stream);
-                document.Open();
-                using (var imageStream = new FileStream(jpgfile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    var image = Image.GetInstance(imageStream);
-                    if (image.Height > iTextSharp.text.PageSize.A4.Height - 25)
-                    {
-                        image.ScaleToFit(iTextSharp.text.PageSize.A4.Width - 25, iTextSharp.text.PageSize.A4.Height - 25);
-                    }
-                    else if (image.Width > iTextSharp.text.PageSize.A4.Width - 25)
-                    {
-                        image.ScaleToFit(iTextSharp.text.PageSize.A4.Width - 25, iTextSharp.text.PageSize.A4.Height - 25);
-                    }
-                    image.Alignment = iTextSharp.text.Image.ALIGN_MIDDLE;
-                    document.Add(image);
-                }
 
-                document.Close();
-            }
-        }
 
         /// <summary>
         /// 生成文件夹
@@ -459,43 +441,27 @@ namespace PDFTools
         {
             //1.创建根目录
             string rootPath = Path.Combine(makePath, fbfName);
-            if (!Directory.Exists(rootPath))
-            {
-                Directory.CreateDirectory(rootPath);
-            }
-            else
-            {
-                if (MessageBox.Show(@"已存在【" + fbfName + "】目录，是否重新生成", "提示信息", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
-                    DialogResult.OK)
-                {
-                    Directory.Delete(rootPath, true);
-                    Directory.CreateDirectory(rootPath);
-                }
-                else
-                {
-                    return;
-                }
-            }
+
+            CreateDir(rootPath);
+           
 
             //2.创建发包方文件夹及子文件夹
             string fbfPath = Path.Combine(rootPath, "发包方");
-            if (!Directory.Exists(fbfPath))
-                Directory.CreateDirectory(fbfPath);
+            CreateDir(fbfPath);
 
             var fbfDict = GetConfigDict("FBF");
             foreach (var item in fbfDict)
             {
                 string dir = Path.Combine(fbfPath, item.Value + " # " + item.Key + fbfCode);
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
+                CreateDir(dir);
             }
 
             #region 3.创建承包方文件夹及子文件夹
             string cbfPath = Path.Combine(rootPath, "承包方");
-            if (!Directory.Exists(cbfPath))
-                Directory.CreateDirectory(cbfPath);
+            CreateDir(cbfPath);
 
             var cbfDict = GetConfigDict("CBF");
+            var cbfPlotDict = GetConfigDict("CBFDKB");//承包方地块信息
 
             //先根据承包方最大简码生成多个文件夹
             int bigNum = Convert.ToInt16(cbfBigCode);
@@ -503,22 +469,104 @@ namespace PDFTools
             {
                 string cbfSimpleCode = i.ToString().PadLeft(4, '0');//承包方简码
                 string singlecbfPath = Path.Combine(cbfPath, cbfSimpleCode);
-                if (!Directory.Exists(singlecbfPath))
-                    Directory.CreateDirectory(singlecbfPath);
+                CreateDir(singlecbfPath);
 
+                string fbfFullCode = fbfCode + cbfSimpleCode;
                 foreach (var item in cbfDict)
                 {
-                    string dir = Path.Combine(singlecbfPath, item.Value + " # " + item.Key + fbfCode + cbfSimpleCode);
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
+                    string dir = Path.Combine(singlecbfPath, item.Value + " # " + item.Key + fbfFullCode);
+                    CreateDir(dir);
+                }
+
+                //处理地块编码信息
+                var plotKey = cbfPlotDict.First().Key;
+                var plotValue = cbfPlotDict.First().Value;
+                var plotList = plotDict[fbfFullCode];//通过承包方代码查找地块编码
+                foreach (var plotCode in plotList)
+                {
+                    string dir = Path.Combine(singlecbfPath, plotValue + " # " + plotKey + plotCode);
+                    CreateDir(dir);
                 }
             }
             #endregion
 
         }
 
+        /// <summary>
+        /// 根据路径创建文件夹
+        /// </summary>
+        /// <param name="dirPath"></param>
+        private void CreateDir(string dirPath)
+        {
+            if (!Directory.Exists(dirPath))
+                Directory.CreateDirectory(dirPath);
+            else
+            {
+                Directory.Delete(dirPath, true);
+                Directory.CreateDirectory(dirPath);
+            }
+        }
+
+        /// <summary>
+        /// 从界址点成果表文件名获取 地块编码与承包方代码的关系
+        /// </summary>
+        private void GetPlotCodeDict(string dictPath)
+        {
+            DirectoryInfo dir = new DirectoryInfo(dictPath);
+            FileInfo[] fil = dir.GetFiles();
+            DirectoryInfo[] dii = dir.GetDirectories();
+            foreach (FileInfo f in fil)
+            {
+                string fileName = f.Name;
+                string cbfCode = fileName.Split('_')[0];
+                string plotCode = fileName.Split('_')[1];
+                if (!plotDict.ContainsKey(cbfCode))
+                {
+                    var list = new List<string>();
+                    list.Add(plotCode);
+                    plotDict.Add(cbfCode, list);
+                }
+                else
+                {
+                    var list = plotDict[cbfCode];
+                    if(!list.Contains(plotCode))
+                        list.Add(plotCode);
+                    plotDict[cbfCode] = list;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 显示报错信息
+        /// </summary>
+        private void ShowErrorMsg()
+        {
+            var sb = new StringBuilder();
+            string fbfCode = txtFBFCode.Text.Trim();
+            for (int i = 0; i < dataGridView1.Rows.Count - 1; i++)
+            {
+                var row = dataGridView1.Rows[i];
+                string fbfGroupName = row.Cells[0].Value.ToString();
+                string cbfBigCode = row.Cells[2].Value.ToString();
+                fbfCode += row.Cells[1].Value.ToString();
+
+                int bigNum = Convert.ToInt16(cbfBigCode);
+                for (int j = 1; j <= bigNum; j++)
+                {
+                    string cbfSimpleCode = j.ToString().PadLeft(4, '0');//承包方简码
+                    string fbfSingleCode = fbfCode + cbfSimpleCode;
+                    if (!plotDict.ContainsKey(fbfSingleCode))//判断地块编码字典中是否存在该承包方户信息，不存在，则添加错误信息
+                    {
+                        sb.AppendFormat("村信息：【{0}】,组信息：【{1}】,户信息【{2}】不存在界址点成果表，请检查数据！", txtCountryName.Text.Trim(),
+                            fbfGroupName, cbfSimpleCode);
+                    }
+                }
+            }
+            txtErrorMsg.Text = sb.ToString();
+        }
+
         #endregion
 
-       
+
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using iTextSharp.text.pdf;
 
-namespace PDFTools
+namespace UtilityCode
 {
     public class PdfSegment
     {

@@ -4,7 +4,7 @@
   <FBF>
     <!--发包方调查表-->
     <value desc="发包方调查表">FBFDCB</value>
-    
+
     <!--发包方名称-->
     <value desc="发包方名称">FBFMC</value>
 
@@ -22,7 +22,7 @@
 
     <!--公示资料-->
     <value desc="公示资料">GSZL</value>
-    
+
   </FBF>
 
   <!--承包关键字定义-->
@@ -38,9 +38,6 @@
 
     <!--承包方调查记事-->
     <value desc="承包方调查记事">CBFDCJS</value>
-
-    <!--承包地块调查表-->
-    <value desc="承包地块调查表">CBFDKDCB</value>
 
     <!--承包地块草图-->
     <value desc="承包地块草图">CBFDKCT</value>
@@ -63,4 +60,11 @@
     <!--二轮承包清册-->
     <value desc="二轮承包清册">ELQC</value>
   </CBF>
+
+
+  <!--承包方地块表关键字定义-->
+  <CBFDKB>
+    <!--承包地块调查表-->
+    <value desc="承包地块调查表">CBFDKDCB</value>
+  </CBFDKB>
 </Config>
