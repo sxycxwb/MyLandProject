@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTools", "TestTools\Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityCode", "UtilityCode\UtilityCode.csproj", "{05B348D9-E292-4AEA-BDE4-56DDDA725599}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenerateTools", "GenerateTools\GenerateTools.csproj", "{866A87E6-40A4-4F2A-946B-3C8CE2203C26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{05B348D9-E292-4AEA-BDE4-56DDDA725599}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05B348D9-E292-4AEA-BDE4-56DDDA725599}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05B348D9-E292-4AEA-BDE4-56DDDA725599}.Release|Any CPU.Build.0 = Release|Any CPU
+		{866A87E6-40A4-4F2A-946B-3C8CE2203C26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{866A87E6-40A4-4F2A-946B-3C8CE2203C26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{866A87E6-40A4-4F2A-946B-3C8CE2203C26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{866A87E6-40A4-4F2A-946B-3C8CE2203C26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

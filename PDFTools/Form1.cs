@@ -41,12 +41,6 @@ namespace PDFTools
                 string foldPath = dialog.SelectedPath;
                 txtWorkPath.Text = foldPath;
             }
-            //140802203201 01 0051
-
-            //140802203201 01 00256
-
-            //界址点成果表目录中是否包含了本次操作所有村组的数据
-            //所有村组户界址点成果表数据是否都在同一个目录下
         }
 
         private void btnSelectPlotCode_Click(object sender, EventArgs e)
@@ -536,7 +530,13 @@ namespace PDFTools
                         list.Add(plotCode);
                     plotDict[cbfCode] = list;
                 }
+                //获取子文件夹内的文件列表，递归遍历
+                foreach (DirectoryInfo d in dii)
+                {
+                    GetPlotCodeDict(d.FullName);
+                }
             }
+
         }
 
         /// <summary>

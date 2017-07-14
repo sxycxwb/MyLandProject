@@ -34,17 +34,25 @@
       <HintPath>..\packages\iTextSharp.5.5.11\lib\itextsharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Spire.Common, Version=1.2.366.55040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\packages\FreeSpire.XLS.7.9.1\lib\net40\Spire.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Spire.Doc, Version=5.7.0.54020, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\packages\FreeSpire.Doc.5.7\lib\net20\Spire.Doc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Spire.License, Version=1.3.5.40, Culture=neutral, PublicKeyToken=b1144360237c8b3f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Spire.XLS\Spire.License.dll</HintPath>
+      <HintPath>..\packages\FreeSpire.XLS.7.9.1\lib\net40\Spire.License.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Spire.Pdf, Version=3.6.230.55040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Spire.XLS\Spire.Pdf.dll</HintPath>
+      <HintPath>..\packages\FreeSpire.XLS.7.9.1\lib\net40\Spire.Pdf.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Spire.XLS, Version=7.9.0.55040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Lib\Spire.XLS\Spire.XLS.dll</HintPath>
+      <HintPath>..\packages\FreeSpire.XLS.7.9.1\lib\net40\Spire.XLS.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -56,13 +64,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MathCode.cs" />
     <Compile Include="PDF\OperateItem.cs" />
     <Compile Include="PDF\PDFFactory.cs" />
     <Compile Include="PDF\PdfSegment.cs" />
     <Compile Include="PDF\PdfUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WordUtility.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
