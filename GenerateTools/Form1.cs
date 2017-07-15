@@ -6,16 +6,27 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
+using Spire.Doc;
 using Spire.Doc.Collections;
-using UtilityCode;
-using Spire.Xls;
+using Newtonsoft.Json;
+using Spring.Model;
 
 namespace GenerateTools
 {
     public partial class Form1 : Form
     {
         List<PlotModel> plotList = new List<PlotModel>();
+        private int totalCount = 0;
+        private int currentIndex = 0;
+
+        /// <summary>
+        /// UI线程的同步上下文
+        /// </summary>
+        SynchronizationContext m_SyncContext = null;
+
+        private Thread thread;
 
         //界址点编号字典
         //key 为界址点编号 value为 坐标实体
@@ -23,6 +34,8 @@ namespace GenerateTools
         public Form1()
         {
             InitializeComponent();
+            //获取UI线程同步上下文
+            m_SyncContext = SynchronizationContext.Current;
         }
 
         private void btnSetWordPath_Click(object sender, EventArgs e)
@@ -36,31 +49,26 @@ namespace GenerateTools
             }
         }
 
-        private void btnSetGeneratePath_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog dialog = new FolderBrowserDialog();
-            dialog.Description = "设置生成路径";
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                string foldPath = dialog.SelectedPath;
-                txtGeneratePath.Text = foldPath;
-            }
-        }
-
         private void btnStart_Click(object sender, EventArgs e)
         {
-            GetPlotInfo();
+            thread = new Thread(new ThreadStart(this.ThreadProcSafePost));
+            thread.Start();
         }
 
-        private void GetPlotInfo()
+        /// <summary>
+        /// 线程的主体方法
+        /// </summary>
+        private void ThreadProcSafePost()
         {
             DirectoryInfo dir = new DirectoryInfo(txtWorkPath.Text.Trim());
             FileInfo[] fil = dir.GetFiles();
+            totalCount = fil.Length;
             DirectoryInfo[] dii = dir.GetDirectories();
+            currentIndex = 0;
             foreach (FileInfo f in fil)
             {
                 var plotModel = new PlotModel();
-
+                currentIndex += 1;
                 string fileName = f.Name;
                 string cbfCode = fileName.Split('_')[0]; //承包方代码
                 string plotCode = fileName.Split('_')[1]; //地块代码
@@ -68,33 +76,56 @@ namespace GenerateTools
                 plotModel.PlotCode = plotCode;
                 SetPlotModel(plotModel, f.FullName);
                 plotList.Add(plotModel);
-
-                //操作填充界址点检查记录表
-                ExecCoordinateExcel(plotModel);
+                m_SyncContext.Post(UpdateUIProcess, currentIndex * 100 / totalCount);
             }
+            //将结果集持久化保存json
+            string json = JsonConvert.SerializeObject(plotList);
+            string rootPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "excel2pdf");
+            if (!Directory.Exists(rootPath))
+                Directory.CreateDirectory(rootPath);
+
+            File.WriteAllText("excel2pdf/coordinates.json", json);
+
+            if (
+                MessageBox.Show("采集数据完成，工采集【" + plotList.Count + "】条数据\r\n是否进行生成PDF操作？", "采集数据完成",
+                    MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
+                DialogResult.OK)
+            {
+                System.Diagnostics.Process p = new System.Diagnostics.Process();
+                p.StartInfo.WorkingDirectory = Path.Combine(Application.StartupPath, "excel2pdf"); //要启动程序路径
+
+                p.StartInfo.FileName = "Excel2Pdf"; //需要启动的程序名   
+                //获得文件夹名称
+                var dirName = txtWorkPath.Text.Trim().Substring(txtWorkPath.Text.Trim().LastIndexOf(@"\") + 1);
+                p.StartInfo.Arguments = dirName.Trim().Replace(" ", ""); //传递的参数       
+                p.Start(); //启动  
+            }
+            else
+            {
+                thread.Abort();
+            }
+
         }
 
-        private void ExecCoordinateExcel(PlotModel model)
+        /// <summary>
+        /// 更新UI的方法
+        /// </summary>
+        /// <param name="text"></param>
+        private void UpdateUIProcess(object obj)
         {
-            Workbook workbook = new Workbook();
-            workbook.LoadFromFile("templete1.xlsx");
-            if (workbook.Worksheets.Count == 0)
-                return;
-            int rows = model.CoordinateList.Count;
-            var worksheet = workbook.Worksheets[0];
-            worksheet.InsertRow(24, 180);
-            workbook.SaveToFile(model.PlotCode+"aaa.xlsx", ExcelVersion.Version2010);
-
-
+            progressBarCollect.Value = Convert.ToInt16(obj);
         }
+
 
         /// <summary>
         /// 为实体赋值
         /// </summary>
         /// <param name="model"></param>
-        private void SetPlotModel(PlotModel model, string filePath)
+        private void SetPlotModel(PlotModel model, string filePath,bool recursive=false)
         {
-            TableCollection tables = WordUtility.GetRowsFromWord(filePath);
+            Document document = new Document();
+            document.LoadFromFile(filePath);
+            TableCollection tables = document.Sections[0].Tables;
             if (tables.Count == 0)
                 return;
             if (tables[0].Rows.Count == 0)
@@ -105,6 +136,11 @@ namespace GenerateTools
                 return;
 
             model.CoordinateList = new List<CoordinatesModel>();
+
+            if (model.PlotCode == "1408301022090400002")
+            {
+                string a = "1";
+            }
 
             #region 处理界址点检查记录信息
             List<string> list = new List<string>();
@@ -119,9 +155,11 @@ namespace GenerateTools
                 coordinate.BoundaryPointNum = row.Cells[1].Paragraphs[0].Text.Trim();
 
                 //对界址点编号中已存在的坐标点 不去重新计算赋值 直接添加入列表
-                if (plotDic.ContainsKey(coordinate.BoundaryPointNum))
+                if (!list.Contains(coordinate.BoundaryPointNum)&&plotDic.ContainsKey(coordinate.BoundaryPointNum) && !recursive)//非递归模式
                 {
+                    list.Add(coordinate.BoundaryPointNum);
                     coordinate = plotDic[coordinate.BoundaryPointNum];
+                    coordinate.OrderNum = (i - 9).ToString();
                     model.CoordinateList.Add(coordinate);
                     continue;
                 }
@@ -150,6 +188,8 @@ namespace GenerateTools
                     list.Add(coordinate.BoundaryPointNum);
                     model.CoordinateList.Add(coordinate);
                 }
+
+
             }
             #endregion
 
@@ -185,7 +225,7 @@ namespace GenerateTools
 
             //最后判断如果 误差>5则重新计算
             if (Convert.ToDouble(model.PercentageError) >= 5)
-                SetPlotModel(model, filePath);
+                SetPlotModel(model, filePath,true);
         }
     }
 }

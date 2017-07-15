@@ -59,4 +59,11 @@
     <!--承包地块调查表-->
     <value desc="承包地块调查表">CBFDKDCB</value>
   </CBFDKB>
+
+  <!--软件注册码-->
+  <RegCode>
+    <value></value>
+    <!--<value>MjczNDJEN0E2MzZBQzExNDA5c2lubGRvLmNvbQ==</value>-->
+  </RegCode>
+  
 </Config>

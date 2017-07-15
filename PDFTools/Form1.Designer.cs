@@ -31,6 +31,10 @@
             this.btnSetWordPath = new System.Windows.Forms.Button();
             this.txtWorkPath = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.btnSelectPlotCode = new System.Windows.Forms.Button();
+            this.txtPlotPath = new System.Windows.Forms.TextBox();
+            this.txtErrorMsg = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.btnAddGroup = new System.Windows.Forms.Button();
@@ -41,12 +45,12 @@
             this.delete = new System.Windows.Forms.DataGridViewLinkColumn();
             this.txtGroupName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnMakeDir = new System.Windows.Forms.Button();
             this.txtGroupNum = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtCBFBigCode = new System.Windows.Forms.TextBox();
             this.txtFBFCode = new System.Windows.Forms.TextBox();
+            this.btnMakeDir = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.txtCountryName = new System.Windows.Forms.TextBox();
@@ -57,10 +61,7 @@
             this.btnSetPath = new System.Windows.Forms.Button();
             this.txtCombinePath = new System.Windows.Forms.TextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.txtErrorMsg = new System.Windows.Forms.TextBox();
-            this.txtPlotPath = new System.Windows.Forms.TextBox();
-            this.btnSelectPlotCode = new System.Windows.Forms.Button();
-            this.label8 = new System.Windows.Forms.Label();
+            this.btnQueryHistory = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -113,6 +114,45 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "1.生成文件夹";
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("方正兰亭超细黑简体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label8.ForeColor = System.Drawing.Color.DarkRed;
+            this.label8.Location = new System.Drawing.Point(628, 401);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(132, 18);
+            this.label8.TabIndex = 27;
+            this.label8.Text = "← 错误消息提示";
+            // 
+            // btnSelectPlotCode
+            // 
+            this.btnSelectPlotCode.Location = new System.Drawing.Point(470, 314);
+            this.btnSelectPlotCode.Margin = new System.Windows.Forms.Padding(2);
+            this.btnSelectPlotCode.Name = "btnSelectPlotCode";
+            this.btnSelectPlotCode.Size = new System.Drawing.Size(153, 29);
+            this.btnSelectPlotCode.TabIndex = 26;
+            this.btnSelectPlotCode.Text = "③ 选择界址点成果表目录";
+            this.btnSelectPlotCode.UseVisualStyleBackColor = true;
+            this.btnSelectPlotCode.Click += new System.EventHandler(this.btnSelectPlotCode_Click);
+            // 
+            // txtPlotPath
+            // 
+            this.txtPlotPath.Location = new System.Drawing.Point(38, 319);
+            this.txtPlotPath.Margin = new System.Windows.Forms.Padding(2);
+            this.txtPlotPath.Name = "txtPlotPath";
+            this.txtPlotPath.Size = new System.Drawing.Size(391, 21);
+            this.txtPlotPath.TabIndex = 20;
+            // 
+            // txtErrorMsg
+            // 
+            this.txtErrorMsg.Location = new System.Drawing.Point(27, 354);
+            this.txtErrorMsg.Margin = new System.Windows.Forms.Padding(2);
+            this.txtErrorMsg.Multiline = true;
+            this.txtErrorMsg.Name = "txtErrorMsg";
+            this.txtErrorMsg.Size = new System.Drawing.Size(596, 103);
+            this.txtErrorMsg.TabIndex = 19;
+            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -127,6 +167,7 @@
             // groupBox3
             // 
             this.groupBox3.BackColor = System.Drawing.Color.PaleGoldenrod;
+            this.groupBox3.Controls.Add(this.btnQueryHistory);
             this.groupBox3.Controls.Add(this.btnAddGroup);
             this.groupBox3.Controls.Add(this.dataGridView1);
             this.groupBox3.Controls.Add(this.txtGroupName);
@@ -213,17 +254,6 @@
             this.label1.TabIndex = 18;
             this.label1.Text = "组名称：";
             // 
-            // btnMakeDir
-            // 
-            this.btnMakeDir.Location = new System.Drawing.Point(648, 429);
-            this.btnMakeDir.Margin = new System.Windows.Forms.Padding(2);
-            this.btnMakeDir.Name = "btnMakeDir";
-            this.btnMakeDir.Size = new System.Drawing.Size(108, 28);
-            this.btnMakeDir.TabIndex = 23;
-            this.btnMakeDir.Text = "④ 生成文件夹";
-            this.btnMakeDir.UseVisualStyleBackColor = true;
-            this.btnMakeDir.Click += new System.EventHandler(this.btnMakeDir_Click);
-            // 
             // txtGroupNum
             // 
             this.txtGroupNum.Location = new System.Drawing.Point(352, 16);
@@ -267,6 +297,17 @@
             this.txtFBFCode.Name = "txtFBFCode";
             this.txtFBFCode.Size = new System.Drawing.Size(145, 21);
             this.txtFBFCode.TabIndex = 14;
+            // 
+            // btnMakeDir
+            // 
+            this.btnMakeDir.Location = new System.Drawing.Point(648, 429);
+            this.btnMakeDir.Margin = new System.Windows.Forms.Padding(2);
+            this.btnMakeDir.Name = "btnMakeDir";
+            this.btnMakeDir.Size = new System.Drawing.Size(108, 28);
+            this.btnMakeDir.TabIndex = 23;
+            this.btnMakeDir.Text = "④ 生成文件夹";
+            this.btnMakeDir.UseVisualStyleBackColor = true;
+            this.btnMakeDir.Click += new System.EventHandler(this.btnMakeDir_Click);
             // 
             // label6
             // 
@@ -372,44 +413,17 @@
             this.backgroundWorker1.WorkerSupportsCancellation = true;
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
-            // txtErrorMsg
+            // btnQueryHistory
             // 
-            this.txtErrorMsg.Location = new System.Drawing.Point(27, 354);
-            this.txtErrorMsg.Margin = new System.Windows.Forms.Padding(2);
-            this.txtErrorMsg.Multiline = true;
-            this.txtErrorMsg.Name = "txtErrorMsg";
-            this.txtErrorMsg.Size = new System.Drawing.Size(596, 103);
-            this.txtErrorMsg.TabIndex = 19;
-            // 
-            // txtPlotPath
-            // 
-            this.txtPlotPath.Location = new System.Drawing.Point(38, 319);
-            this.txtPlotPath.Margin = new System.Windows.Forms.Padding(2);
-            this.txtPlotPath.Name = "txtPlotPath";
-            this.txtPlotPath.Size = new System.Drawing.Size(391, 21);
-            this.txtPlotPath.TabIndex = 20;
-            // 
-            // btnSelectPlotCode
-            // 
-            this.btnSelectPlotCode.Location = new System.Drawing.Point(470, 314);
-            this.btnSelectPlotCode.Margin = new System.Windows.Forms.Padding(2);
-            this.btnSelectPlotCode.Name = "btnSelectPlotCode";
-            this.btnSelectPlotCode.Size = new System.Drawing.Size(153, 29);
-            this.btnSelectPlotCode.TabIndex = 26;
-            this.btnSelectPlotCode.Text = "③ 选择界址点成果表目录";
-            this.btnSelectPlotCode.UseVisualStyleBackColor = true;
-            this.btnSelectPlotCode.Click += new System.EventHandler(this.btnSelectPlotCode_Click);
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("方正兰亭超细黑简体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label8.ForeColor = System.Drawing.Color.DarkRed;
-            this.label8.Location = new System.Drawing.Point(628, 401);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(132, 18);
-            this.label8.TabIndex = 27;
-            this.label8.Text = "← 错误消息提示";
+            this.btnQueryHistory.Location = new System.Drawing.Point(631, 48);
+            this.btnQueryHistory.Margin = new System.Windows.Forms.Padding(2);
+            this.btnQueryHistory.Name = "btnQueryHistory";
+            this.btnQueryHistory.Size = new System.Drawing.Size(108, 24);
+            this.btnQueryHistory.TabIndex = 26;
+            this.btnQueryHistory.Text = "软件使用情况";
+            this.btnQueryHistory.UseVisualStyleBackColor = true;
+            this.btnQueryHistory.Visible = false;
+            this.btnQueryHistory.Click += new System.EventHandler(this.btnQueryHistory_Click);
             // 
             // Form1
             // 
@@ -421,6 +435,7 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "扫描文件处理工具";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -466,6 +481,7 @@
         private System.Windows.Forms.TextBox txtPlotPath;
         private System.Windows.Forms.Button btnSelectPlotCode;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button btnQueryHistory;
     }
 }
 

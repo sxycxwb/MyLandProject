@@ -30,9 +30,10 @@
         {
             this.txtWorkPath = new System.Windows.Forms.TextBox();
             this.btnSetWordPath = new System.Windows.Forms.Button();
-            this.txtGeneratePath = new System.Windows.Forms.TextBox();
-            this.btnSetGeneratePath = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.progressBarCollect = new System.Windows.Forms.ProgressBar();
+            this.lbPrecent = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtWorkPath
@@ -41,14 +42,14 @@
             this.txtWorkPath.Margin = new System.Windows.Forms.Padding(2);
             this.txtWorkPath.Multiline = true;
             this.txtWorkPath.Name = "txtWorkPath";
-            this.txtWorkPath.Size = new System.Drawing.Size(248, 33);
+            this.txtWorkPath.Size = new System.Drawing.Size(248, 53);
             this.txtWorkPath.TabIndex = 11;
             this.txtWorkPath.Text = "C:\\Users\\spring\\Documents\\Tencent Files\\646323970\\FileRecv\\寺前 4组界址点成果表\\寺前 4组界址点成果" +
     "表";
             // 
             // btnSetWordPath
             // 
-            this.btnSetWordPath.Location = new System.Drawing.Point(264, 24);
+            this.btnSetWordPath.Location = new System.Drawing.Point(263, 47);
             this.btnSetWordPath.Margin = new System.Windows.Forms.Padding(2);
             this.btnSetWordPath.Name = "btnSetWordPath";
             this.btnSetWordPath.Size = new System.Drawing.Size(136, 27);
@@ -57,30 +58,9 @@
             this.btnSetWordPath.UseVisualStyleBackColor = true;
             this.btnSetWordPath.Click += new System.EventHandler(this.btnSetWordPath_Click);
             // 
-            // txtGeneratePath
-            // 
-            this.txtGeneratePath.Location = new System.Drawing.Point(11, 82);
-            this.txtGeneratePath.Margin = new System.Windows.Forms.Padding(2);
-            this.txtGeneratePath.Multiline = true;
-            this.txtGeneratePath.Name = "txtGeneratePath";
-            this.txtGeneratePath.Size = new System.Drawing.Size(248, 19);
-            this.txtGeneratePath.TabIndex = 13;
-            this.txtGeneratePath.Text = "D:\\界址点和面积精度表";
-            // 
-            // btnSetGeneratePath
-            // 
-            this.btnSetGeneratePath.Location = new System.Drawing.Point(264, 78);
-            this.btnSetGeneratePath.Margin = new System.Windows.Forms.Padding(2);
-            this.btnSetGeneratePath.Name = "btnSetGeneratePath";
-            this.btnSetGeneratePath.Size = new System.Drawing.Size(136, 27);
-            this.btnSetGeneratePath.TabIndex = 14;
-            this.btnSetGeneratePath.Text = "设置生成路径";
-            this.btnSetGeneratePath.UseVisualStyleBackColor = true;
-            this.btnSetGeneratePath.Click += new System.EventHandler(this.btnSetGeneratePath_Click);
-            // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(11, 146);
+            this.btnStart.Location = new System.Drawing.Point(11, 189);
             this.btnStart.Margin = new System.Windows.Forms.Padding(2);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(136, 27);
@@ -89,14 +69,39 @@
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(14, 126);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(89, 12);
+            this.label1.TabIndex = 16;
+            this.label1.Text = "采集数据进度：";
+            // 
+            // progressBarCollect
+            // 
+            this.progressBarCollect.Location = new System.Drawing.Point(101, 121);
+            this.progressBarCollect.Name = "progressBarCollect";
+            this.progressBarCollect.Size = new System.Drawing.Size(299, 23);
+            this.progressBarCollect.TabIndex = 17;
+            // 
+            // lbPrecent
+            // 
+            this.lbPrecent.AutoSize = true;
+            this.lbPrecent.Location = new System.Drawing.Point(354, 196);
+            this.lbPrecent.Name = "lbPrecent";
+            this.lbPrecent.Size = new System.Drawing.Size(0, 12);
+            this.lbPrecent.TabIndex = 18;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(411, 259);
+            this.Controls.Add(this.lbPrecent);
+            this.Controls.Add(this.progressBarCollect);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.btnStart);
-            this.Controls.Add(this.txtGeneratePath);
-            this.Controls.Add(this.btnSetGeneratePath);
             this.Controls.Add(this.txtWorkPath);
             this.Controls.Add(this.btnSetWordPath);
             this.Name = "Form1";
@@ -110,9 +115,10 @@
 
         private System.Windows.Forms.TextBox txtWorkPath;
         private System.Windows.Forms.Button btnSetWordPath;
-        private System.Windows.Forms.TextBox txtGeneratePath;
-        private System.Windows.Forms.Button btnSetGeneratePath;
         private System.Windows.Forms.Button btnStart;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ProgressBar progressBarCollect;
+        private System.Windows.Forms.Label lbPrecent;
     }
 }
 

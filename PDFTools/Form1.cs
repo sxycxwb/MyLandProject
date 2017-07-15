@@ -29,11 +29,21 @@ namespace PDFTools
         public Form1()
         {
             InitializeComponent();
+            if (string.IsNullOrEmpty(PublicCode.UserType) && !PublicCode.CheckRegCode())
+            {
+                MessageBox.Show("非法访问!");
+                return;
+            }
+
+            if (PublicCode.UserType == "admin")//管理员允许查看操作日志
+                btnQueryHistory.Visible = true;
         }
 
         #region Event
         private void btnSetWordPath_Click(object sender, EventArgs e)
         {
+            string num = GetSerial.getMNum();
+
             FolderBrowserDialog dialog = new FolderBrowserDialog();
             dialog.Description = "请设置文件夹生成路径";
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -178,17 +188,20 @@ namespace PDFTools
                     Directory.CreateDirectory(makePath);
                 }
 
+                string logGroupInfo = string.Empty;
                 for (int i = 0; i < dataGridView1.Rows.Count - 1; i++)
                 {
                     var row = dataGridView1.Rows[i];
                     string fbfName = row.Cells[0].Value.ToString();
                     string cbfBigCode = row.Cells[2].Value.ToString();
                     fbfCode += row.Cells[1].Value.ToString();
+                    logGroupInfo += string.Format("【({0}) 组名称：{1},组号：{2},承包方最大编码：{3}】",i+1, fbfName, row.Cells[1].Value, cbfBigCode);
                     CreateDir(makePath, fbfName, fbfCode, cbfBigCode);
                 }
 
                 #region 操作完毕 给予提示
 
+                PublicCode.Log("【自动生成文件夹操作】 村名称【" + countryName + "】发包方代码【" + fbfCode + "】" + (dataGridView1.Rows.Count - 1) + "个组信息: { "+ logGroupInfo+" }");
                 if (MessageBox.Show(@"是否需要打开生成目录", "操作成功", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
                 {
                     if (Directory.Exists(makePath))
@@ -247,6 +260,7 @@ namespace PDFTools
                 MessageBox.Show(@"已选择【" + levelName + "】目录\r\n操作路径【" + path + "】\r\n包含【" + pdfCount + "】个pdf文件，【" + photoCount + "】个图片文件\r\n是否合并处理为pdf？", "提示信息-操作前请做好备份", MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Question) == DialogResult.OK)
             {
+                PublicCode.Log("【自动合并生成PDF文件操作】操作路径【"+ path + "】级别 【"+levelName+ "】包含【" + pdfCount + "】个pdf文件,【" + photoCount + "】个图片文件");
                 processTotalCount = pdfCount + photoCount;
                 if (pdfCount == 0 && photoCount == 0)
                 {
@@ -569,8 +583,23 @@ namespace PDFTools
             txtErrorMsg.Text = sb.ToString();
         }
 
+
         #endregion
 
+        /// <summary>
+        /// 软件使用情况查询
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnQueryHistory_Click(object sender, EventArgs e)
+        {
+            LogInfo logForm = new LogInfo();
+            logForm.ShowDialog();
+        }
 
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();//程序退出
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GenerateTools
+namespace Spring.Model
 {
     /// <summary>
     /// 地块实体

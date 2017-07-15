@@ -38,6 +38,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,6 +55,20 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GetSerial.cs" />
+    <Compile Include="LogInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LogInfo.Designer.cs">
+      <DependentUpon>LogInfo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PublicCode.cs" />
+    <Compile Include="LoginIn.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoginIn.Designer.cs">
+      <DependentUpon>LoginIn.cs</DependentUpon>
+    </Compile>
     <Compile Include="ProcessForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -64,6 +79,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogInfo.resx">
+      <DependentUpon>LogInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoginIn.resx">
+      <DependentUpon>LoginIn.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProcessForm.resx">
       <DependentUpon>ProcessForm.cs</DependentUpon>

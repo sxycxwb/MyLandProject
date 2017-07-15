@@ -25,7 +25,7 @@ namespace TestTools
         private void button1_Click(object sender, EventArgs e)
         {
             //PdfUtility.ConvertExcel2PDF("1.xlsx", "1.pdf");
-            PdfUtility.ConvertExcel2PDF("test.xlsx", "test.pdf");
+            PdfUtility.ConvertExcel2PDF("templete2.xlsx", "templete2.xlsx.pdf");
             //Workbook workbook = new Workbook();
             //workbook.LoadFromFile("test.xlsx");
             //workbook.Worksheets[0].
@@ -131,7 +131,9 @@ namespace TestTools
         private void button2_Click(object sender, EventArgs e)
         {
             //string path = "C:\\Users\\spring\Documents\\Tencent Files\\646323970\\FileRecv\\寺前 4组界址点成果表\\寺前 4组界址点成果表";
-
+            byte[] bytes = Encoding.Default.GetBytes(GetSerial.getMNum() + "sinldo.com");
+            string regCode = Convert.ToBase64String(bytes);
+            txtRegCode.Text = regCode;
         }
     }
 }

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config>
+  <!--发包方关键字定义-->
+
+  <!--承包关键字定义-->
+  <JZD>
+
+    <!--承包地块界址点精度评价-->
+    <value desc="承包地块界址点精度评价">CBDKJZDJD</value>
+
+  </JZD>
+
+  <AREA>
+
+    <!--承包地块面积精度评价-->
+    <value desc="承包地块面积精度评价">CBDKMJJD</value>
+
+  </AREA>
+
+</Config>

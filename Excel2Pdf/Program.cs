@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace PDFTools
+namespace Excel2Pdf
 {
     static class Program
     {
@@ -15,7 +15,7 @@ namespace PDFTools
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LoginIn());
+            Application.Run(new Form1());
         }
     }
 }
