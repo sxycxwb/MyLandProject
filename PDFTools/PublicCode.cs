@@ -94,10 +94,17 @@ namespace PDFTools
 
         public static string GetLog()
         {
-            string log = File.ReadAllText(file);
-            byte[] c = Convert.FromBase64String(log);
-            log = Encoding.Default.GetString(c);
-            return log;
+            StringBuilder sb = new StringBuilder();
+            if (!File.Exists(file))
+                return "";
+                var logArr = File.ReadAllLines(file);
+            foreach (var log in logArr)
+            {
+                byte[] c = Convert.FromBase64String(log);
+                sb.AppendLine(Encoding.Default.GetString(c));
+            }
+           
+            return sb.ToString();
         }
     }
 

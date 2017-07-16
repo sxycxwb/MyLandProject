@@ -18,6 +18,7 @@ namespace Excel2Pdf
     public partial class Form1 : Form
     {
         private string dirNanme = "";
+        private Thread thread;
         /// <summary>
         /// UI线程的同步上下文
         /// </summary>
@@ -37,7 +38,7 @@ namespace Excel2Pdf
             //获取UI线程同步上下文
             m_SyncContext = SynchronizationContext.Current;
 
-            var thread = new Thread(new ThreadStart(this.ThreadProcSafePost));
+            thread = new Thread(new ThreadStart(this.ThreadProcSafePost));
             thread.Start();
         }
 
@@ -59,12 +60,13 @@ namespace Excel2Pdf
                 //在线程中更新UI（通过UI线程同步上下文m_SyncContext）
                 m_SyncContext.Post(UpdateUIProcess, (i + 1) * 100 / plotList.Count);
             }
-            this.Close();
+            
             if (MessageBox.Show(@"是否需要打开生成目录", "操作成功", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
                 string makePath = GetGeneratePath();
                 if (Directory.Exists(makePath))
                     System.Diagnostics.Process.Start(makePath);
+                this.Close();
             }
         }
 
@@ -140,6 +142,23 @@ namespace Excel2Pdf
             //先给界址点中误差m赋值
             worksheet.Range["D25"].Text = model.PlotM;
             worksheet.Range["D25"].Style.HorizontalAlignment = HorizontalAlignType.Right;
+            //模板中只有19行，如果数据超过则需要增加行
+            if (model.CoordinateList.Count > 19)
+            {
+                int insertRowsCount = model.CoordinateList.Count - 19;
+                worksheet.InsertRow(25, insertRowsCount);
+                //为新增加行复制样式
+                for (int i = 0; i < insertRowsCount; i++)
+                {
+                    int currentRow = 25 + i;
+                    worksheet.SetRowHeight(currentRow, 25);
+                    worksheet.Copy(worksheet.Range["A24:K24"], worksheet.Range["A"+ currentRow + ":k"+ currentRow], true);
+                }
+                
+
+            }
+
+
             //循环处理行数据
             for (int i = 0; i < model.CoordinateList.Count; i++)
             {
@@ -157,11 +176,6 @@ namespace Excel2Pdf
                 worksheet.Range["J" + currentRowIndex].Text = coordinate.difSquareL;
             }
 
-
-            //TODO:新增的行高问题待解决
-            //int rows = model.CoordinateList.Count;
-            //worksheet.InsertRow(25, 180);
-            //worksheet.Copy(worksheet.Range["A24:K24"], worksheet.Range["A25:k25"], true);
 
             string generatePath = GetGeneratePath();
             if (!Directory.Exists(generatePath))
@@ -207,10 +221,17 @@ namespace Excel2Pdf
         private string GetGeneratePath()
         {
             string currentPath = AppDomain.CurrentDomain.BaseDirectory;
-            Directory.SetCurrentDirectory(Directory.GetParent(Directory.GetParent(currentPath).FullName).FullName);
+            Directory.SetCurrentDirectory(Directory.GetParent(Directory.GetParent(Directory.GetParent(currentPath).FullName).FullName).FullName);
 
             currentPath = Directory.GetCurrentDirectory();
-            return  Path.Combine(currentPath, dirNanme, "承包方");
+            return Path.Combine(currentPath, dirNanme, "承包方");
+        }
+
+        //窗口关闭事件
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            thread.Abort();
+            Application.Exit();
         }
     }
 

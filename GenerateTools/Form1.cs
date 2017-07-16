@@ -33,9 +33,13 @@ namespace GenerateTools
         private Dictionary<string, CoordinatesModel> plotDic = new Dictionary<string, CoordinatesModel>();
         public Form1()
         {
+           
             InitializeComponent();
             //获取UI线程同步上下文
             m_SyncContext = SynchronizationContext.Current;
+
+           
+
         }
 
         private void btnSetWordPath_Click(object sender, EventArgs e)
@@ -51,6 +55,14 @@ namespace GenerateTools
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            DirectoryInfo dir = new DirectoryInfo(txtWorkPath.Text.Trim());
+            FileInfo[] fil = dir.GetFiles();
+            if (fil.Length == 0)
+            {
+                MessageBox.Show("所选路径下没有文件，请重试！");
+                return;
+            }
+
             thread = new Thread(new ThreadStart(this.ThreadProcSafePost));
             thread.Start();
         }
@@ -91,12 +103,15 @@ namespace GenerateTools
                     MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
                 DialogResult.OK)
             {
+                var dirName = txtWorkPath.Text.Trim().Substring(txtWorkPath.Text.Trim().LastIndexOf(@"\") + 1);
+
+                Log("【自动采集生成界址点面积评估表操作】 采集并生成 【"+ dirName + "】【"+ plotList.Count + "】条数据");
                 System.Diagnostics.Process p = new System.Diagnostics.Process();
                 p.StartInfo.WorkingDirectory = Path.Combine(Application.StartupPath, "excel2pdf"); //要启动程序路径
 
                 p.StartInfo.FileName = "Excel2Pdf"; //需要启动的程序名   
                 //获得文件夹名称
-                var dirName = txtWorkPath.Text.Trim().Substring(txtWorkPath.Text.Trim().LastIndexOf(@"\") + 1);
+                
                 p.StartInfo.Arguments = dirName.Trim().Replace(" ", ""); //传递的参数       
                 p.Start(); //启动  
             }
@@ -121,7 +136,7 @@ namespace GenerateTools
         /// 为实体赋值
         /// </summary>
         /// <param name="model"></param>
-        private void SetPlotModel(PlotModel model, string filePath,bool recursive=false)
+        private void SetPlotModel(PlotModel model, string filePath, bool recursive = false)
         {
             Document document = new Document();
             document.LoadFromFile(filePath);
@@ -137,60 +152,61 @@ namespace GenerateTools
 
             model.CoordinateList = new List<CoordinatesModel>();
 
-            if (model.PlotCode == "1408301022090400002")
-            {
-                string a = "1";
-            }
-
             #region 处理界址点检查记录信息
             List<string> list = new List<string>();
-            for (int i = 10; i < tables[0].Rows.Count; i++)
+            //循环多页
+            for (int j = 0; j < tables.Count; j++)
             {
-                var row = tables[0].Rows[i];
-                if (string.IsNullOrEmpty(row.Cells[0].Paragraphs[0].Text))
-                    break;
-                var coordinate = new CoordinatesModel();
-                coordinate.OrderNum = (i - 9).ToString();
-                coordinate.SerialNumber = row.Cells[0].Paragraphs[0].Text.Trim();
-                coordinate.BoundaryPointNum = row.Cells[1].Paragraphs[0].Text.Trim();
-
-                //对界址点编号中已存在的坐标点 不去重新计算赋值 直接添加入列表
-                if (!list.Contains(coordinate.BoundaryPointNum)&&plotDic.ContainsKey(coordinate.BoundaryPointNum) && !recursive)//非递归模式
+                for (int i = 10; i < tables[j].Rows.Count; i++)
                 {
-                    list.Add(coordinate.BoundaryPointNum);
-                    coordinate = plotDic[coordinate.BoundaryPointNum];
+                    var row = tables[j].Rows[i];
+                    if (string.IsNullOrEmpty(row.Cells[0].Paragraphs[0].Text))
+                        break;
+                    var coordinate = new CoordinatesModel();
                     coordinate.OrderNum = (i - 9).ToString();
-                    model.CoordinateList.Add(coordinate);
-                    continue;
+                    coordinate.SerialNumber = row.Cells[0].Paragraphs[0].Text.Trim();
+                    coordinate.BoundaryPointNum = row.Cells[1].Paragraphs[0].Text.Trim();
+
+                    //对界址点编号中已存在的坐标点 不去重新计算赋值 直接添加入列表
+                    if (!list.Contains(coordinate.BoundaryPointNum) && plotDic.ContainsKey(coordinate.BoundaryPointNum) && !recursive)//非递归模式
+                    {
+                        list.Add(coordinate.BoundaryPointNum);
+                        coordinate = plotDic[coordinate.BoundaryPointNum];
+                        coordinate.OrderNum = (i - 9).ToString();
+                        model.CoordinateList.Add(coordinate);
+                        continue;
+                    }
+
+                    coordinate.X = Convert.ToDouble(row.Cells[2].Paragraphs[0].Text.Trim()).ToString("f3");
+                    coordinate.Y = Convert.ToDouble(row.Cells[3].Paragraphs[0].Text.Trim()).ToString("f3");
+                    //先随机 ∆L
+                    coordinate.difL = MathCode.GetRandomNumber(0.05, 0.35, 4).ToString("f3");
+                    coordinate.difSquareL = Math.Pow(Convert.ToDouble(coordinate.difL), 2.0).ToString("f3");
+                    //再随机 X'
+                    coordinate.cX = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-Convert.ToDouble(coordinate.difL) / 4, Convert.ToDouble(coordinate.difL) / 4, 3)).ToString("f3");
+                    coordinate.difX = (Convert.ToDouble(coordinate.X) - Convert.ToDouble(coordinate.cX)).ToString("f3");
+
+                    //根据公式求出 ∆y ∆y = 开平方（∆L2-∆x2）  每次随机正负值
+                    Random rd = new Random();
+                    var r = rd.Next(0, 2);
+                    coordinate.difY = ((r == 0 ? -1 : 1) * Math.Sqrt(Convert.ToDouble(coordinate.difSquareL) - Math.Pow(Convert.ToDouble(coordinate.difX), 2.0))).ToString("f3");
+
+                    coordinate.cY = (Convert.ToDouble(coordinate.Y) - Convert.ToDouble(coordinate.difY)).ToString("f3");
+
+                    if (!plotDic.ContainsKey(coordinate.BoundaryPointNum))//界址点编号字典添加坐标实体
+                        plotDic.Add(coordinate.BoundaryPointNum, coordinate);
+
+                    if (!list.Contains(coordinate.BoundaryPointNum))//不把最后一个回归原点的坐标统计入内
+                    {
+                        list.Add(coordinate.BoundaryPointNum);
+                        model.CoordinateList.Add(coordinate);
+                    }
+
+
                 }
-
-                coordinate.X = Convert.ToDouble(row.Cells[2].Paragraphs[0].Text.Trim()).ToString("f3");
-                coordinate.Y = Convert.ToDouble(row.Cells[3].Paragraphs[0].Text.Trim()).ToString("f3");
-                //先随机 ∆L
-                coordinate.difL = MathCode.GetRandomNumber(0.05, 0.35, 4).ToString("f3");
-                coordinate.difSquareL = Math.Pow(Convert.ToDouble(coordinate.difL), 2.0).ToString("f3");
-                //再随机 X'
-                coordinate.cX = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-Convert.ToDouble(coordinate.difL) / 4, Convert.ToDouble(coordinate.difL) / 4, 3)).ToString("f3");
-                coordinate.difX = (Convert.ToDouble(coordinate.X) - Convert.ToDouble(coordinate.cX)).ToString("f3");
-
-                //根据公式求出 ∆y ∆y = 开平方（∆L2-∆x2）  每次随机正负值
-                Random rd = new Random();
-                var r = rd.Next(0, 2);
-                coordinate.difY = ((r == 0 ? -1 : 1) * Math.Sqrt(Convert.ToDouble(coordinate.difSquareL) - Math.Pow(Convert.ToDouble(coordinate.difX), 2.0))).ToString("f3");
-
-                coordinate.cY = (Convert.ToDouble(coordinate.Y) - Convert.ToDouble(coordinate.difY)).ToString("f3");
-
-                if (!plotDic.ContainsKey(coordinate.BoundaryPointNum))//界址点编号字典添加坐标实体
-                    plotDic.Add(coordinate.BoundaryPointNum, coordinate);
-
-                if (!list.Contains(coordinate.BoundaryPointNum))//不把最后一个回归原点的坐标统计入内
-                {
-                    list.Add(coordinate.BoundaryPointNum);
-                    model.CoordinateList.Add(coordinate);
-                }
-
-
             }
+
+            
             #endregion
 
             #region 处理面积检查记录信息
@@ -219,13 +235,58 @@ namespace GenerateTools
             {
                 difLSum += Convert.ToDouble(coordinate.difL);
             }
-            model.PlotM = (difLSum / (2 * model.CoordinateList.Count)).ToString("f8");
+            model.PlotM = (difLSum / (2 * model.CoordinateList.Count)).ToString("f4");
 
             #endregion
 
             //最后判断如果 误差>5则重新计算
             if (Convert.ToDouble(model.PercentageError) >= 5)
-                SetPlotModel(model, filePath,true);
+                SetPlotModel(model, filePath, true);
+        }
+
+        public void Log(string logTxt)
+        {
+            string file = AppDomain.CurrentDomain.BaseDirectory;
+            Directory.SetCurrentDirectory(Directory.GetParent(Directory.GetParent(file).FullName).FullName);
+
+            file = Path.Combine(Directory.GetCurrentDirectory(),"Spring.dll");
+
+            if (!File.Exists(file))
+            {
+                FileStream filestream = null;
+                try
+                {
+                    filestream = System.IO.File.Create(file);
+                    filestream.Dispose();
+                    filestream.Close();
+                }
+                catch (System.Exception ex)
+                {
+                    throw new System.Exception(ex + "创建日志文件失败");
+                }
+            }
+
+            //true 如果日志文件存在则继续追加日志 
+            System.IO.StreamWriter sw = null;
+            try
+            {
+                sw = new System.IO.StreamWriter(file, true, System.Text.Encoding.UTF8);
+                string logInfo = "【" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "】" + "" + logTxt + "";
+
+                byte[] bytes = Encoding.Default.GetBytes(logInfo);
+                logInfo = Convert.ToBase64String(bytes);
+                sw.WriteLine(logInfo);
+            }
+            catch (System.Exception ex)
+            {
+                throw new System.Exception(ex + "写入日志失败，检查！");
+            }
+            finally
+            {
+                sw.Flush();
+                sw.Dispose();
+                sw.Close();
+            }
         }
     }
 }

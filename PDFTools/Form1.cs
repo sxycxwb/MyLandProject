@@ -601,5 +601,21 @@ namespace PDFTools
         {
             Application.Exit();//程序退出
         }
+
+        /// <summary>
+        /// 开启界址点面积精度评价表生成工具
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnOpenGenerateTools_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process p = new System.Diagnostics.Process();
+            p.StartInfo.WorkingDirectory = Path.Combine(Application.StartupPath, "generatetools"); //要启动程序路径
+
+            p.StartInfo.FileName = "GenerateTools"; //需要启动的程序名   
+                                                //获得文件夹名称
+            p.StartInfo.Arguments = "sinldo.com"; //传递的参数       
+            p.Start(); //启动  
+        }
     }
 }

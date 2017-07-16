@@ -37,6 +37,8 @@
             this.txtErrorMsg = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnOpenGenerateTools = new System.Windows.Forms.Button();
+            this.btnQueryHistory = new System.Windows.Forms.Button();
             this.btnAddGroup = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.GroupName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -61,7 +63,6 @@
             this.btnSetPath = new System.Windows.Forms.Button();
             this.txtCombinePath = new System.Windows.Forms.TextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.btnQueryHistory = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -167,6 +168,7 @@
             // groupBox3
             // 
             this.groupBox3.BackColor = System.Drawing.Color.PaleGoldenrod;
+            this.groupBox3.Controls.Add(this.btnOpenGenerateTools);
             this.groupBox3.Controls.Add(this.btnQueryHistory);
             this.groupBox3.Controls.Add(this.btnAddGroup);
             this.groupBox3.Controls.Add(this.dataGridView1);
@@ -182,6 +184,29 @@
             this.groupBox3.TabIndex = 17;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "组操作";
+            // 
+            // btnOpenGenerateTools
+            // 
+            this.btnOpenGenerateTools.Location = new System.Drawing.Point(633, 188);
+            this.btnOpenGenerateTools.Margin = new System.Windows.Forms.Padding(2);
+            this.btnOpenGenerateTools.Name = "btnOpenGenerateTools";
+            this.btnOpenGenerateTools.Size = new System.Drawing.Size(107, 41);
+            this.btnOpenGenerateTools.TabIndex = 27;
+            this.btnOpenGenerateTools.Text = "界址点面积精度评价表生成工具";
+            this.btnOpenGenerateTools.UseVisualStyleBackColor = true;
+            this.btnOpenGenerateTools.Click += new System.EventHandler(this.btnOpenGenerateTools_Click);
+            // 
+            // btnQueryHistory
+            // 
+            this.btnQueryHistory.Location = new System.Drawing.Point(631, 48);
+            this.btnQueryHistory.Margin = new System.Windows.Forms.Padding(2);
+            this.btnQueryHistory.Name = "btnQueryHistory";
+            this.btnQueryHistory.Size = new System.Drawing.Size(108, 24);
+            this.btnQueryHistory.TabIndex = 26;
+            this.btnQueryHistory.Text = "软件使用情况";
+            this.btnQueryHistory.UseVisualStyleBackColor = true;
+            this.btnQueryHistory.Visible = false;
+            this.btnQueryHistory.Click += new System.EventHandler(this.btnQueryHistory_Click);
             // 
             // btnAddGroup
             // 
@@ -413,18 +438,6 @@
             this.backgroundWorker1.WorkerSupportsCancellation = true;
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
-            // btnQueryHistory
-            // 
-            this.btnQueryHistory.Location = new System.Drawing.Point(631, 48);
-            this.btnQueryHistory.Margin = new System.Windows.Forms.Padding(2);
-            this.btnQueryHistory.Name = "btnQueryHistory";
-            this.btnQueryHistory.Size = new System.Drawing.Size(108, 24);
-            this.btnQueryHistory.TabIndex = 26;
-            this.btnQueryHistory.Text = "软件使用情况";
-            this.btnQueryHistory.UseVisualStyleBackColor = true;
-            this.btnQueryHistory.Visible = false;
-            this.btnQueryHistory.Click += new System.EventHandler(this.btnQueryHistory_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -482,6 +495,7 @@
         private System.Windows.Forms.Button btnSelectPlotCode;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btnQueryHistory;
+        private System.Windows.Forms.Button btnOpenGenerateTools;
     }
 }
 
