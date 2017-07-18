@@ -166,7 +166,7 @@ namespace Excel2Pdf
                 {
                     int currentRow = 24 + i;
                     worksheet.SetRowHeight(currentRow, 22);
-                    worksheet.Copy(worksheet.Range["A24:K24"], worksheet.Range["A"+ currentRow + ":k"+ currentRow], true);
+                    worksheet.Copy(worksheet.Range["A23:K23"], worksheet.Range["A"+ currentRow + ":K"+ currentRow], true);
                 }
                 
 
