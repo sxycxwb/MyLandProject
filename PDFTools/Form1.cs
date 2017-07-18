@@ -194,7 +194,7 @@ namespace PDFTools
                     var row = dataGridView1.Rows[i];
                     string fbfName = row.Cells[0].Value.ToString();
                     string cbfBigCode = row.Cells[2].Value.ToString();
-                    fbfCode += row.Cells[1].Value.ToString();
+                    fbfCode = txtFBFCode.Text.Trim() + row.Cells[1].Value.ToString();
                     logGroupInfo += string.Format("【({0}) 组名称：{1},组号：{2},承包方最大编码：{3}】",i+1, fbfName, row.Cells[1].Value, cbfBigCode);
                     CreateDir(makePath, fbfName, fbfCode, cbfBigCode);
                 }
@@ -487,17 +487,21 @@ namespace PDFTools
                 }
 
                 //处理地块编码信息
-                var plotKey = cbfPlotDict.First().Key;
-                var plotValue = cbfPlotDict.First().Value;
-                if (plotDict.ContainsKey(fbfFullCode))
+                foreach (var item in cbfPlotDict)
                 {
-                    var plotList = plotDict[fbfFullCode]; //通过承包方代码查找地块编码
-                    foreach (var plotCode in plotList)
+                    var plotKey = item.Key;
+                    var plotValue = item.Value;
+                    if (plotDict.ContainsKey(fbfFullCode))
                     {
-                        string dir = Path.Combine(singlecbfPath, plotValue + " # " + plotKey + plotCode);
-                        CreateDir(dir);
+                        var plotList = plotDict[fbfFullCode]; //通过承包方代码查找地块编码
+                        foreach (var plotCode in plotList)
+                        {
+                            string dir = Path.Combine(singlecbfPath, plotValue + " # " + plotKey + plotCode);
+                            CreateDir(dir);
+                        }
                     }
                 }
+                
             }
             #endregion
 
@@ -580,6 +584,7 @@ namespace PDFTools
                     }
                 }
             }
+            txtErrorMsg.Text = "";
             txtErrorMsg.Text = sb.ToString();
         }
 
