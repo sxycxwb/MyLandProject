@@ -194,6 +194,7 @@
             this.btnOpenGenerateTools.TabIndex = 27;
             this.btnOpenGenerateTools.Text = "界址点面积精度评价表生成工具";
             this.btnOpenGenerateTools.UseVisualStyleBackColor = true;
+            this.btnOpenGenerateTools.Visible = false;
             this.btnOpenGenerateTools.Click += new System.EventHandler(this.btnOpenGenerateTools_Click);
             // 
             // btnQueryHistory

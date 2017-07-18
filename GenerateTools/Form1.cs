@@ -55,6 +55,11 @@ namespace GenerateTools
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(txtCheckName.Text.Trim()))
+            {
+                MessageBox.Show("检查人员姓名不能为空！");
+                return;
+            }
             DirectoryInfo dir = new DirectoryInfo(txtWorkPath.Text.Trim());
             FileInfo[] fil = dir.GetFiles();
             if (fil.Length == 0)
@@ -110,9 +115,10 @@ namespace GenerateTools
                 p.StartInfo.WorkingDirectory = Path.Combine(Application.StartupPath, "excel2pdf"); //要启动程序路径
 
                 p.StartInfo.FileName = "Excel2Pdf"; //需要启动的程序名   
-                //获得文件夹名称
-                
-                p.StartInfo.Arguments = dirName.Trim().Replace(" ", ""); //传递的参数       
+                                                    //获得文件夹名称
+
+                //传递的参数 参数1：文件夹名称 参数2：检查人姓名 参数3：检查日期
+                p.StartInfo.Arguments = dirName.Trim().Replace(" ", "")+ " "+txtCheckName.Text.Trim() +" "+Convert.ToDateTime(txtCheckDate.Text).ToString("yyyy年MM月dd日");        
                 p.Start(); //启动  
             }
             else
@@ -151,6 +157,8 @@ namespace GenerateTools
                 return;
 
             model.CoordinateList = new List<CoordinatesModel>();
+            model.PlotName = tables[0].Rows[2].Cells[1].Paragraphs[0].Text.Trim();//地块名称
+            model.CbfDBName = tables[0].Rows[4].Cells[1].Paragraphs[0].Text.Trim();//承包方代表名称
 
             #region 处理界址点检查记录信息
             List<string> list = new List<string>();
@@ -180,7 +188,7 @@ namespace GenerateTools
                     coordinate.X = Convert.ToDouble(row.Cells[2].Paragraphs[0].Text.Trim()).ToString("f3");
                     coordinate.Y = Convert.ToDouble(row.Cells[3].Paragraphs[0].Text.Trim()).ToString("f3");
                     //先随机 ∆L
-                    coordinate.difL = MathCode.GetRandomNumber(0.05, 0.35, 4).ToString("f3");
+                    coordinate.difL = MathCode.GetRandomNumber(0.05, 0.79, 4).ToString("f3");
                     coordinate.difSquareL = Math.Pow(Convert.ToDouble(coordinate.difL), 2.0).ToString("f3");
                     //再随机 X'
                     coordinate.cX = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-Convert.ToDouble(coordinate.difL) / 4, Convert.ToDouble(coordinate.difL) / 4, 3)).ToString("f3");

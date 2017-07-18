@@ -34,6 +34,10 @@
             this.label1 = new System.Windows.Forms.Label();
             this.progressBarCollect = new System.Windows.Forms.ProgressBar();
             this.lbPrecent = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtCheckDate = new System.Windows.Forms.DateTimePicker();
+            this.txtCheckName = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // txtWorkPath
@@ -58,7 +62,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(11, 189);
+            this.btnStart.Location = new System.Drawing.Point(11, 221);
             this.btnStart.Margin = new System.Windows.Forms.Padding(2);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(136, 27);
@@ -70,7 +74,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 126);
+            this.label1.Location = new System.Drawing.Point(14, 181);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 12);
             this.label1.TabIndex = 16;
@@ -78,7 +82,7 @@
             // 
             // progressBarCollect
             // 
-            this.progressBarCollect.Location = new System.Drawing.Point(101, 121);
+            this.progressBarCollect.Location = new System.Drawing.Point(101, 176);
             this.progressBarCollect.Name = "progressBarCollect";
             this.progressBarCollect.Size = new System.Drawing.Size(299, 23);
             this.progressBarCollect.TabIndex = 17;
@@ -91,11 +95,47 @@
             this.lbPrecent.Size = new System.Drawing.Size(0, 12);
             this.lbPrecent.TabIndex = 18;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(14, 125);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(89, 12);
+            this.label2.TabIndex = 19;
+            this.label2.Text = "检查人员姓名：";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(198, 125);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 12);
+            this.label3.TabIndex = 20;
+            this.label3.Text = "检查日期：";
+            // 
+            // txtCheckDate
+            // 
+            this.txtCheckDate.Location = new System.Drawing.Point(263, 121);
+            this.txtCheckDate.Name = "txtCheckDate";
+            this.txtCheckDate.Size = new System.Drawing.Size(136, 21);
+            this.txtCheckDate.TabIndex = 21;
+            // 
+            // txtCheckName
+            // 
+            this.txtCheckName.Location = new System.Drawing.Point(101, 122);
+            this.txtCheckName.Name = "txtCheckName";
+            this.txtCheckName.Size = new System.Drawing.Size(91, 21);
+            this.txtCheckName.TabIndex = 22;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(411, 259);
+            this.Controls.Add(this.txtCheckName);
+            this.Controls.Add(this.txtCheckDate);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.lbPrecent);
             this.Controls.Add(this.progressBarCollect);
             this.Controls.Add(this.label1);
@@ -117,6 +157,10 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ProgressBar progressBarCollect;
         private System.Windows.Forms.Label lbPrecent;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.DateTimePicker txtCheckDate;
+        private System.Windows.Forms.TextBox txtCheckName;
     }
 }
 

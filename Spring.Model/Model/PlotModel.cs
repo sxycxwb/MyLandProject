@@ -11,9 +11,19 @@ namespace Spring.Model
     public class PlotModel
     {
         /// <summary>
+        /// 地块名称
+        /// </summary>
+        public string PlotName { get; set; }
+
+        /// <summary>
         /// 承包方代码
         /// </summary>
         public string CbfCode { get; set; }
+
+        /// <summary>
+        /// 承包方代表名称
+        /// </summary>
+        public string CbfDBName { get; set; }
 
         /// <summary>
         /// 地块代码
@@ -21,9 +31,11 @@ namespace Spring.Model
         public string PlotCode { get; set; }
 
         /// <summary>
-        /// 地块面积P'
+        /// 地块面积P
         /// </summary>
         public string PlotArea { get; set; }
+
+        
 
         /// <summary>
         /// 检查地块面积P'

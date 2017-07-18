@@ -24,6 +24,9 @@ namespace Excel2Pdf
         /// </summary>
         SynchronizationContext m_SyncContext = null;
 
+        private string checkName = "";
+        private string checkDate = "";
+
         public Form1()
         {
             InitializeComponent();
@@ -33,6 +36,8 @@ namespace Excel2Pdf
             {
                 //参数0是它本身的路径
                 dirNanme = CmdArgs[1].ToString();
+                checkName = CmdArgs[2];
+                checkDate = CmdArgs[3];
             }
 
             //获取UI线程同步上下文
@@ -139,19 +144,28 @@ namespace Excel2Pdf
                 return;
 
             var worksheet = workbook.Worksheets[0];
+            //抬头数据 承包方代码 承包方代表名称 地块编码 地块名称
+            worksheet.Range["A2"].Text = worksheet.Range["A2"].Text+model.CbfCode;
+            worksheet.Range["F2"].Text = worksheet.Range["F2"].Text + model.CbfDBName;
+            worksheet.Range["A3"].Text = worksheet.Range["A3"].Text + model.PlotCode;
+            worksheet.Range["F3"].Text = worksheet.Range["F3"].Text + model.PlotName;
+            //表底信息
+            worksheet.Range["A29"].Text = worksheet.Range["A29"].Text + checkName;
+            worksheet.Range["F29"].Text = worksheet.Range["F29"].Text + checkDate;
+
             //先给界址点中误差m赋值
             worksheet.Range["D25"].Text = model.PlotM;
             worksheet.Range["D25"].Style.HorizontalAlignment = HorizontalAlignType.Right;
             //模板中只有19行，如果数据超过则需要增加行
-            if (model.CoordinateList.Count > 19)
+            if (model.CoordinateList.Count > 18)
             {
-                int insertRowsCount = model.CoordinateList.Count - 19;
-                worksheet.InsertRow(25, insertRowsCount);
+                int insertRowsCount = model.CoordinateList.Count - 18;
+                worksheet.InsertRow(24, insertRowsCount);
                 //为新增加行复制样式
                 for (int i = 0; i < insertRowsCount; i++)
                 {
-                    int currentRow = 25 + i;
-                    worksheet.SetRowHeight(currentRow, 25);
+                    int currentRow = 24 + i;
+                    worksheet.SetRowHeight(currentRow, 22);
                     worksheet.Copy(worksheet.Range["A24:K24"], worksheet.Range["A"+ currentRow + ":k"+ currentRow], true);
                 }
                 
@@ -163,7 +177,7 @@ namespace Excel2Pdf
             for (int i = 0; i < model.CoordinateList.Count; i++)
             {
                 var coordinate = model.CoordinateList[i];
-                int currentRowIndex = i + 6;
+                int currentRowIndex = i + 7;
                 worksheet.Range["A" + currentRowIndex].Text = (i + 1).ToString();
                 worksheet.Range["B" + currentRowIndex].Text = coordinate.BoundaryPointNum;
                 worksheet.Range["C" + currentRowIndex].Text = coordinate.X;
@@ -199,12 +213,21 @@ namespace Excel2Pdf
                 return;
 
             var worksheet2 = workbook2.Worksheets[0];
-            worksheet2.Range["A4"].Text = "1";
-            worksheet2.Range["B4"].Text = model.PlotCode;
-            worksheet2.Range["C4"].Text = model.PlotArea;
-            worksheet2.Range["D4"].Text = model.PlotCheckArea;
-            worksheet2.Range["E4"].Text = model.DifArea;
-            worksheet2.Range["F4"].Text = model.PercentageError + "%";
+
+            //抬头数据 承包方代码 承包方代表名称 地块编码 地块名称
+            worksheet2.Range["A2"].Text = worksheet2.Range["A2"].Text + model.CbfCode;
+            worksheet2.Range["D2"].Text = worksheet2.Range["D2"].Text + model.CbfDBName;
+            worksheet2.Range["A3"].Text = worksheet2.Range["A3"].Text + model.PlotCode;
+            worksheet2.Range["D3"].Text = worksheet2.Range["D3"].Text + model.PlotName;
+            //表底信息
+            worksheet2.Range["A29"].Text = worksheet2.Range["A29"].Text + checkName;
+            worksheet2.Range["D29"].Text = worksheet2.Range["D29"].Text + checkDate;
+
+            worksheet2.Range["A5"].Text = "1";
+            worksheet2.Range["B5"].Text = model.PlotArea;
+            worksheet2.Range["C5"].Text = model.PlotCheckArea;
+            worksheet2.Range["D5"].Text = model.DifArea;
+            worksheet2.Range["E5"].Text = model.PercentageError + "%";
 
             string generatePath2 = GetGeneratePath();
 
