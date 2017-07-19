@@ -46,9 +46,11 @@
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.btnSetPath);
             this.groupBox2.Controls.Add(this.txtCombinePath);
-            this.groupBox2.Location = new System.Drawing.Point(12, 26);
+            this.groupBox2.Location = new System.Drawing.Point(8, 17);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(956, 255);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Size = new System.Drawing.Size(637, 170);
             this.groupBox2.TabIndex = 13;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "合并处理pdf文件";
@@ -58,40 +60,41 @@
             this.ckIsDelete.AutoSize = true;
             this.ckIsDelete.Checked = true;
             this.ckIsDelete.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ckIsDelete.Location = new System.Drawing.Point(375, 157);
-            this.ckIsDelete.Margin = new System.Windows.Forms.Padding(4);
+            this.ckIsDelete.Location = new System.Drawing.Point(250, 105);
             this.ckIsDelete.Name = "ckIsDelete";
-            this.ckIsDelete.Size = new System.Drawing.Size(214, 22);
+            this.ckIsDelete.Size = new System.Drawing.Size(144, 16);
             this.ckIsDelete.TabIndex = 14;
             this.ckIsDelete.Text = "合并后是否删除原文件";
             this.ckIsDelete.UseVisualStyleBackColor = true;
             // 
             // btnCombine
             // 
-            this.btnCombine.Location = new System.Drawing.Point(623, 141);
+            this.btnCombine.Location = new System.Drawing.Point(415, 94);
+            this.btnCombine.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnCombine.Name = "btnCombine";
-            this.btnCombine.Size = new System.Drawing.Size(164, 56);
+            this.btnCombine.Size = new System.Drawing.Size(109, 37);
             this.btnCombine.TabIndex = 13;
             this.btnCombine.Text = "② 合并处理文件";
             this.btnCombine.UseVisualStyleBackColor = true;
+            this.btnCombine.Click += new System.EventHandler(this.btnCombine_Click);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label4.ForeColor = System.Drawing.Color.Red;
-            this.label4.Location = new System.Drawing.Point(51, 36);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Location = new System.Drawing.Point(34, 24);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(494, 18);
+            this.label4.Size = new System.Drawing.Size(329, 12);
             this.label4.TabIndex = 12;
             this.label4.Text = "提示：选择发包方名称的根目录，可选择村级别或组级别目录";
             // 
             // btnSetPath
             // 
-            this.btnSetPath.Location = new System.Drawing.Point(623, 64);
+            this.btnSetPath.Location = new System.Drawing.Point(415, 43);
+            this.btnSetPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSetPath.Name = "btnSetPath";
-            this.btnSetPath.Size = new System.Drawing.Size(162, 40);
+            this.btnSetPath.Size = new System.Drawing.Size(108, 27);
             this.btnSetPath.TabIndex = 11;
             this.btnSetPath.Text = "① 选择操作路径";
             this.btnSetPath.UseVisualStyleBackColor = true;
@@ -99,11 +102,10 @@
             // 
             // txtCombinePath
             // 
-            this.txtCombinePath.Location = new System.Drawing.Point(26, 64);
-            this.txtCombinePath.Margin = new System.Windows.Forms.Padding(4);
+            this.txtCombinePath.Location = new System.Drawing.Point(17, 43);
             this.txtCombinePath.Multiline = true;
             this.txtCombinePath.Name = "txtCombinePath";
-            this.txtCombinePath.Size = new System.Drawing.Size(558, 52);
+            this.txtCombinePath.Size = new System.Drawing.Size(373, 36);
             this.txtCombinePath.TabIndex = 0;
             // 
             // backgroundWorker1
@@ -114,10 +116,11 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(981, 317);
+            this.ClientSize = new System.Drawing.Size(654, 211);
             this.Controls.Add(this.groupBox2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Form1";
             this.Text = "合并工具";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);

@@ -25,6 +25,8 @@ namespace PDFTools
         private int photoCount = 0;//图片总数
         private int level;//目录级别
         private Dictionary<string, List<string>> plotDict = new Dictionary<string, List<string>>();
+        private string keyVal = "sinldo.com";
+        private string ivVal = "http://www.sinldo.com";
 
         public Form1()
         {
@@ -37,6 +39,7 @@ namespace PDFTools
 
             if (PublicCode.UserType == "admin")//管理员允许查看操作日志
                 btnQueryHistory.Visible = true;
+
         }
 
         #region Event
@@ -112,6 +115,7 @@ namespace PDFTools
                         continue;
                     }
                     string pdfN = dirName.Split('#')[1].Trim();
+                    //pdfN = EncryptUtil.UnAesStr(pdfN, keyVal, ivVal);
                     string newPdfName = Path.Combine(fbfPath, pdfN + ".pdf");
                     PdfUtility.MergePDF(fileArr, newPdfName);
                     if (ckIsDelete.Checked)
@@ -147,6 +151,7 @@ namespace PDFTools
                             continue;
                         }
                         string pdfN = dirName.Split('#')[1].Trim();
+                        //pdfN = EncryptUtil.UnAesStr(pdfN, keyVal, ivVal);
                         string newPdfName = Path.Combine(cbfPath, pdfN + ".pdf");
                         PdfUtility.MergePDF(fileArr, newPdfName);
                         currentpdfIndex += fileArr.Length;
@@ -253,6 +258,7 @@ namespace PDFTools
             string path = txtCombinePath.Text.Trim();
             pdfCount = 0;
             photoCount = 0;
+            currentpdfIndex = 0;
             getPath(path);
             level = GetDirLevel(path);
             string levelName = level == 2 ? "组级别" : "村级别";
@@ -513,6 +519,18 @@ namespace PDFTools
         /// <param name="dirPath"></param>
         private void CreateDir(string dirPath)
         {
+            //#region 处理文件夹加密信息
+
+            //if (dirPath.IndexOf("#")!=-1)
+            //{
+            //    string code = dirPath.Split('#')[1];
+            //    var encrypCode = EncryptUtil.AesStr(code, keyVal, ivVal);
+                
+            //    dirPath = dirPath.Substring(0, dirPath.IndexOf("#")) + "# "+ encrypCode;
+            //}
+
+            //#endregion
+
             if (!Directory.Exists(dirPath))
                 Directory.CreateDirectory(dirPath);
             else

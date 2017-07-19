@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-using Spire.Xls;
 
 namespace UtilityCode
 {
@@ -57,12 +56,7 @@ namespace UtilityCode
             pf.Merge(outputFilePath);
         }
 
-        public static void ConvertExcel2PDF(string excelFIle, string pdf)
-        {
-            Workbook workbook = new Workbook();
-            workbook.LoadFromFile(excelFIle);
-            workbook.SaveToFile(pdf, FileFormat.PDF);
-        }
+        
 
     }
 }

@@ -15,7 +15,7 @@ namespace PDFCombineTools
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new LoginIn());
+            Application.Run(new Form1());
         }
     }
 }

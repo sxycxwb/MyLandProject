@@ -9,7 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 
-namespace PDFCombineTools
+namespace GenerateTools
 {
     public partial class LoginIn : Form
     {
@@ -56,7 +56,9 @@ namespace PDFCombineTools
                 }
             }
 
-            
+            this.Hide();
+            Form1 mainFrom = new Form1();
+            mainFrom.ShowDialog();
 
         }
 
@@ -82,14 +84,6 @@ namespace PDFCombineTools
             catch { }
         }
 
-        private void label3_Click(object sender, EventArgs e)
-        {
 
-        }
-
-        private void txtRegCode_TextChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }

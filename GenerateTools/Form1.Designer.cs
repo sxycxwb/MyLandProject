@@ -62,7 +62,7 @@
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(11, 221);
+            this.btnStart.Location = new System.Drawing.Point(11, 207);
             this.btnStart.Margin = new System.Windows.Forms.Padding(2);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(136, 27);
@@ -74,7 +74,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 181);
+            this.label1.Location = new System.Drawing.Point(14, 167);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 12);
             this.label1.TabIndex = 16;
@@ -82,7 +82,7 @@
             // 
             // progressBarCollect
             // 
-            this.progressBarCollect.Location = new System.Drawing.Point(101, 176);
+            this.progressBarCollect.Location = new System.Drawing.Point(101, 162);
             this.progressBarCollect.Name = "progressBarCollect";
             this.progressBarCollect.Size = new System.Drawing.Size(299, 23);
             this.progressBarCollect.TabIndex = 17;
@@ -98,7 +98,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(14, 125);
+            this.label2.Location = new System.Drawing.Point(14, 103);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(89, 12);
             this.label2.TabIndex = 19;
@@ -107,7 +107,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(198, 125);
+            this.label3.Location = new System.Drawing.Point(198, 103);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 12);
             this.label3.TabIndex = 20;
@@ -115,14 +115,14 @@
             // 
             // txtCheckDate
             // 
-            this.txtCheckDate.Location = new System.Drawing.Point(263, 121);
+            this.txtCheckDate.Location = new System.Drawing.Point(263, 99);
             this.txtCheckDate.Name = "txtCheckDate";
             this.txtCheckDate.Size = new System.Drawing.Size(136, 21);
             this.txtCheckDate.TabIndex = 21;
             // 
             // txtCheckName
             // 
-            this.txtCheckName.Location = new System.Drawing.Point(101, 122);
+            this.txtCheckName.Location = new System.Drawing.Point(101, 100);
             this.txtCheckName.Name = "txtCheckName";
             this.txtCheckName.Size = new System.Drawing.Size(91, 21);
             this.txtCheckName.TabIndex = 22;
@@ -144,6 +144,7 @@
             this.Controls.Add(this.btnSetWordPath);
             this.Name = "Form1";
             this.Text = "界址点精度与面积精度记录生成工具";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

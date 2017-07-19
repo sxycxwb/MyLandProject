@@ -33,13 +33,10 @@ namespace GenerateTools
         private Dictionary<string, CoordinatesModel> plotDic = new Dictionary<string, CoordinatesModel>();
         public Form1()
         {
-           
+
             InitializeComponent();
             //获取UI线程同步上下文
             m_SyncContext = SynchronizationContext.Current;
-
-           
-
         }
 
         private void btnSetWordPath_Click(object sender, EventArgs e)
@@ -60,6 +57,7 @@ namespace GenerateTools
                 MessageBox.Show("检查人员姓名不能为空！");
                 return;
             }
+
             DirectoryInfo dir = new DirectoryInfo(txtWorkPath.Text.Trim());
             FileInfo[] fil = dir.GetFiles();
             if (fil.Length == 0)
@@ -110,15 +108,15 @@ namespace GenerateTools
             {
                 var dirName = txtWorkPath.Text.Trim().Substring(txtWorkPath.Text.Trim().LastIndexOf(@"\") + 1);
 
-                Log("【自动采集生成界址点面积评估表操作】 采集并生成 【"+ dirName + "】【"+ plotList.Count + "】条数据");
+                //Log("【自动采集生成界址点面积评估表操作】 采集并生成 【" + dirName + "】【" + plotList.Count + "】条数据");
                 System.Diagnostics.Process p = new System.Diagnostics.Process();
                 p.StartInfo.WorkingDirectory = Path.Combine(Application.StartupPath, "excel2pdf"); //要启动程序路径
 
                 p.StartInfo.FileName = "Excel2Pdf"; //需要启动的程序名   
                                                     //获得文件夹名称
 
-                //传递的参数 参数1：文件夹名称 参数2：检查人姓名 参数3：检查日期
-                p.StartInfo.Arguments = dirName.Trim().Replace(" ", "")+ " "+txtCheckName.Text.Trim() +" "+Convert.ToDateTime(txtCheckDate.Text).ToString("yyyy年MM月dd日");        
+                //传递的参数 参数1：文件夹名称 参数2：检查人姓名 参数3：检查日期 
+                p.StartInfo.Arguments = dirName.Trim().Replace(" ", "") + " " + txtCheckName.Text.Trim() + " " + Convert.ToDateTime(txtCheckDate.Text).ToString("yyyy年MM月dd日");
                 p.Start(); //启动  
             }
             else
@@ -192,6 +190,21 @@ namespace GenerateTools
                     coordinate.difSquareL = Math.Pow(Convert.ToDouble(coordinate.difL), 2.0).ToString("f3");
                     //再随机 X'
                     coordinate.cX = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-Convert.ToDouble(coordinate.difL) / 4, Convert.ToDouble(coordinate.difL) / 4, 3)).ToString("f3");
+
+                    #region 随机三次X取样值
+                    bool flagX = true;
+                    while (flagX)
+                    {
+                        coordinate.X1 = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
+                        coordinate.X2 = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
+                        coordinate.X3 = (3 * Convert.ToDouble(coordinate.X) - Convert.ToDouble(coordinate.X1) - Convert.ToDouble(coordinate.X2)).ToString("f3");
+                        if (Math.Abs(Convert.ToDouble(coordinate.X3) - Convert.ToDouble(coordinate.X)) < 0.8) //超出范围
+                        {
+                            flagX = false;
+                        }
+                    }
+                    #endregion
+
                     coordinate.difX = (Convert.ToDouble(coordinate.X) - Convert.ToDouble(coordinate.cX)).ToString("f3");
 
                     //根据公式求出 ∆y ∆y = 开平方（∆L2-∆x2）  每次随机正负值
@@ -200,6 +213,20 @@ namespace GenerateTools
                     coordinate.difY = ((r == 0 ? -1 : 1) * Math.Sqrt(Convert.ToDouble(coordinate.difSquareL) - Math.Pow(Convert.ToDouble(coordinate.difX), 2.0))).ToString("f3");
 
                     coordinate.cY = (Convert.ToDouble(coordinate.Y) - Convert.ToDouble(coordinate.difY)).ToString("f3");
+                    #region 随机三次Y取样值
+                    bool flagY = true;
+                    while (flagY)
+                    {
+                        coordinate.Y1 = (Convert.ToDouble(coordinate.Y) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
+                        coordinate.Y2 = (Convert.ToDouble(coordinate.Y) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
+                        coordinate.Y3 = (3 * Convert.ToDouble(coordinate.Y) - Convert.ToDouble(coordinate.Y1) - Convert.ToDouble(coordinate.Y2)).ToString("f3");
+                        if (Math.Abs(Convert.ToDouble(coordinate.Y3) - Convert.ToDouble(coordinate.Y)) < 0.8) //超出范围
+                        {
+                            flagY = false;
+                        }
+                    }
+                    #endregion
+
 
                     if (!plotDic.ContainsKey(coordinate.BoundaryPointNum))//界址点编号字典添加坐标实体
                         plotDic.Add(coordinate.BoundaryPointNum, coordinate);
@@ -214,7 +241,7 @@ namespace GenerateTools
                 }
             }
 
-            
+
             #endregion
 
             #region 处理面积检查记录信息
@@ -257,7 +284,7 @@ namespace GenerateTools
             string file = AppDomain.CurrentDomain.BaseDirectory;
             Directory.SetCurrentDirectory(Directory.GetParent(Directory.GetParent(file).FullName).FullName);
 
-            file = Path.Combine(Directory.GetCurrentDirectory(),"Spring.dll");
+            file = Path.Combine(Directory.GetCurrentDirectory(), "Spring.dll");
 
             if (!File.Exists(file))
             {
@@ -295,6 +322,11 @@ namespace GenerateTools
                 sw.Dispose();
                 sw.Close();
             }
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

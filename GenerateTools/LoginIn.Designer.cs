@@ -1,4 +1,4 @@
-﻿namespace PDFCombineTools
+﻿namespace GenerateTools
 {
     partial class LoginIn
     {
@@ -51,7 +51,6 @@
             this.txtRegCode.Name = "txtRegCode";
             this.txtRegCode.Size = new System.Drawing.Size(300, 28);
             this.txtRegCode.TabIndex = 6;
-            this.txtRegCode.TextChanged += new System.EventHandler(this.txtRegCode_TextChanged);
             // 
             // label3
             // 
@@ -62,7 +61,6 @@
             this.label3.Size = new System.Drawing.Size(80, 18);
             this.label3.TabIndex = 5;
             this.label3.Text = "注册码：";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // LoginIn
             // 

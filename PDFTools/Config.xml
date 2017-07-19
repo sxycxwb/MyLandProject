@@ -3,54 +3,48 @@
   <!--发包方关键字定义-->
   <FBF>
     <!--1.发包方调查表-->
-    <value desc="发包方调查表">FBFDCB</value>
+    <value desc="1.表1">FBFDCB</value>
     <!--2.发包方名称-->
-    <value desc="发包方名称">FBFMC</value>
+    <value desc="2.发包方名称">FBFMC</value>
     <!--3.发包方负责人-->
-    <value desc="发包方负责人">FBFFZR</value>
+    <value desc="3.发包方负责人">FBFFZR</value>
     <!--4.承包经营权调查信息公示表-->
-    <value desc="承包经营权调查信息公示表">CBJYQDCGS</value>
+    <value desc="4.表5-公示表">CBJYQDCGS</value>
     <!--5.二轮承包清册-->
-    <value desc="二轮承包清册">ELQC</value>
+    <value desc="5.二轮承包清册">ELQC</value>
     <!--6.公示资料-->
-    <value desc="公示资料">GSZL</value>
-
+    <value desc="6.公示资料">GSZL</value>
   </FBF>
-
   <!--承包关键字定义-->
   <CBF>
     <!--1.承包方调查表-->
-    <value desc="承包方调查表">CBFDCB</value>
+    <value desc="1.表2-">CBFDCB</value>
     <!--2.承包方(代表)名称-->
-    <value desc="承包方(代表)名称">CBFMC</value>
+    <value desc="2.承包代表">CBFMC</value>
     <!--3.承包方家庭成员-->
-    <value desc="承包方家庭成员">CBFJTCY</value>
-    
+    <value desc="3.家庭成员- ">CBFJTCY</value>
     <!--7.承包经营权调查核实表-->
-    <value desc="承包经营权调查核实表">CBJYQDCHS</value>
+    <value desc="7.表4核实表-">CBJYQDCHS</value>
     <!--8.承包经营权工作结果归户表-->
-    <value desc="承包经营权工作结果归户表">CBJYQGH</value>
+    <value desc="8.表6 归户表-">CBJYQGH</value>
     <!--9.承包依据-->
-    <value desc="承包依据">CBYJ</value>
+    <value desc="9.承包依据">CBYJ</value>
     <!--10.合同-->
-    <value desc="合同">HT</value>
-
+    <value desc="10.合同">HT</value>
   </CBF>
-
-
   <!--承包方地块表关键字定义-->
   <CBFDKB>
     <!--4.承包地块调查表-->
-    <value desc="承包地块调查表">CBFDKDCB</value>
+    <value desc="4.表3-">CBFDKDCB</value>
     <!--5.承包地块界址点精度评价-->
-    <value desc="承包地块界址点精度评价">CBDKJZDJD</value>
+    <value desc="5.界址点检查-">CBDKJZDJD</value>
     <!--6.承包地块面积精度评价-->
-    <value desc="承包地块面积精度评价">CBDKMJJD</value>
+    <value desc="6.面积检查- ">CBDKMJJD</value>
   </CBFDKB>
 
   <!--软件注册码-->
   <RegCode>
-    <value></value>
+    <value>NDRDNUQyN0E2MzZBQzEyODA3c2lubGRvLmNvbQ==</value>
     <!--<value>MjczNDJEN0E2MzZBQzExNDA5c2lubGRvLmNvbQ==</value>-->
   </RegCode>
   

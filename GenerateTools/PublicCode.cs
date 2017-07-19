@@ -6,7 +6,7 @@ using System.Xml;
 using System.IO;
 using System.Management;
 
-namespace PDFCombineTools
+namespace GenerateTools
 {
     public static class PublicCode
     {

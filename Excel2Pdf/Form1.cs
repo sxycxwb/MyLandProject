@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using System.Xml;
 using Spire.Xls;
 using Spring.Model;
-using UtilityCode;
 
 namespace Excel2Pdf
 {
@@ -65,7 +64,9 @@ namespace Excel2Pdf
                 //在线程中更新UI（通过UI线程同步上下文m_SyncContext）
                 m_SyncContext.Post(UpdateUIProcess, (i + 1) * 100 / plotList.Count);
             }
-            
+            ExecCoordinateSummary(plotList);
+
+
             if (MessageBox.Show(@"是否需要打开生成目录", "操作成功", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
                 string makePath = GetGeneratePath();
@@ -145,7 +146,7 @@ namespace Excel2Pdf
 
             var worksheet = workbook.Worksheets[0];
             //抬头数据 承包方代码 承包方代表名称 地块编码 地块名称
-            worksheet.Range["A2"].Text = worksheet.Range["A2"].Text+model.CbfCode;
+            worksheet.Range["A2"].Text = worksheet.Range["A2"].Text + model.CbfCode;
             worksheet.Range["F2"].Text = worksheet.Range["F2"].Text + model.CbfDBName;
             worksheet.Range["A3"].Text = worksheet.Range["A3"].Text + model.PlotCode;
             worksheet.Range["F3"].Text = worksheet.Range["F3"].Text + model.PlotName;
@@ -166,12 +167,9 @@ namespace Excel2Pdf
                 {
                     int currentRow = 24 + i;
                     worksheet.SetRowHeight(currentRow, 22);
-                    worksheet.Copy(worksheet.Range["A23:K23"], worksheet.Range["A"+ currentRow + ":K"+ currentRow], true);
+                    worksheet.Copy(worksheet.Range["A23:K23"], worksheet.Range["A" + currentRow + ":K" + currentRow], true);
                 }
-                
-
             }
-
 
             //循环处理行数据
             for (int i = 0; i < model.CoordinateList.Count; i++)
@@ -189,7 +187,6 @@ namespace Excel2Pdf
                 worksheet.Range["I" + currentRowIndex].Text = coordinate.difL;
                 worksheet.Range["J" + currentRowIndex].Text = coordinate.difSquareL;
             }
-
 
             string generatePath = GetGeneratePath();
             if (!Directory.Exists(generatePath))
@@ -241,13 +238,70 @@ namespace Excel2Pdf
             #endregion
         }
 
-        private string GetGeneratePath()
+        /// <summary>
+        /// 处理界址点与面积汇总表
+        /// </summary>
+        /// <param name="plotList"></param>
+        private void ExecCoordinateSummary(List<PlotModel> plotList)
+        {
+            int totalCount = 1;
+            Workbook workbook = new Workbook();
+            var tempetePath = AppDomain.CurrentDomain.BaseDirectory;
+            tempetePath = Path.Combine(tempetePath, "Templete", "templete3.xlsx");
+            workbook.LoadFromFile(tempetePath);
+            if (workbook.Worksheets.Count == 0)
+                return;
+            var worksheet = workbook.Worksheets[0];
+            for (int i = 0; i < plotList.Count; i++)
+            {
+                var plotModel = plotList[i];
+                for (int j = 0; j < plotModel.CoordinateList.Count; j++)
+                {
+                    var coordinate = plotModel.CoordinateList[j];
+                    int currentRowIndex = totalCount + 5;
+
+                    if (currentRowIndex > 20)//如果超出20条数据，则增加数据行
+                    {
+                        worksheet.InsertRow(19+totalCount, 1);
+                        worksheet.SetRowHeight(currentRowIndex, 22);
+                        worksheet.Copy(worksheet.Range["A19:P19"], worksheet.Range["A" + currentRowIndex + ":P" + currentRowIndex], true);
+                    }
+
+                    worksheet.Range["A" + currentRowIndex].Text = totalCount.ToString();
+                    worksheet.Range["B" + currentRowIndex].Text = coordinate.BoundaryPointNum;
+                    worksheet.Range["C" + currentRowIndex].Text = coordinate.X;
+                    worksheet.Range["D" + currentRowIndex].Text = coordinate.Y;
+                    worksheet.Range["E" + currentRowIndex].Text = coordinate.X1;
+                    worksheet.Range["F" + currentRowIndex].Text = coordinate.Y1;
+                    worksheet.Range["G" + currentRowIndex].Text = coordinate.X2;
+                    worksheet.Range["H" + currentRowIndex].Text = coordinate.Y2;
+                    worksheet.Range["I" + currentRowIndex].Text = coordinate.X3;
+                    worksheet.Range["J" + currentRowIndex].Text = coordinate.Y3;
+                    worksheet.Range["K" + currentRowIndex].Text = coordinate.cX;
+                    worksheet.Range["L" + currentRowIndex].Text = coordinate.cY;
+                    worksheet.Range["M" + currentRowIndex].Text = coordinate.difX;
+                    worksheet.Range["N" + currentRowIndex].Text = coordinate.difY;
+                    worksheet.Range["O" + currentRowIndex].Text = coordinate.difL;
+                    worksheet.Range["P" + currentRowIndex].Text = coordinate.difSquareL;
+
+                    totalCount++;//自增
+                }
+            }
+
+            string generatePath = GetGeneratePath("承包地块界址点精度检查汇总记录");
+            if (!Directory.Exists(generatePath))
+                Directory.CreateDirectory(generatePath);
+            generatePath = Path.Combine(generatePath, "承包地块界址点精度检查汇总记录-(" + dirNanme + ").xlsx");
+            workbook.SaveToFile(generatePath, ExcelVersion.Version2010);
+        }
+
+        private string GetGeneratePath(string directName = "承包方")
         {
             string currentPath = AppDomain.CurrentDomain.BaseDirectory;
-            Directory.SetCurrentDirectory(Directory.GetParent(Directory.GetParent(Directory.GetParent(currentPath).FullName).FullName).FullName);
+            Directory.SetCurrentDirectory(Directory.GetParent(Directory.GetParent(currentPath).FullName).FullName);
 
             currentPath = Directory.GetCurrentDirectory();
-            return Path.Combine(currentPath, dirNanme, "承包方");
+            return Path.Combine(currentPath, dirNanme, directName);
         }
 
         //窗口关闭事件

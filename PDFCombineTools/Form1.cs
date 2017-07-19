@@ -20,7 +20,8 @@ namespace PDFCombineTools
         private int pdfCount = 0;//pdf文件总数
         private int photoCount = 0;//图片总数
         private int level;//目录级别
-
+        private string keyVal = "sinldo.com";
+        private string ivVal = "http://www.sinldo.com";
         public Form1()
         {
             InitializeComponent();
@@ -49,10 +50,10 @@ namespace PDFCombineTools
         /// <param name="e"></param>
         private void btnCombine_Click(object sender, EventArgs e)
         {
-
             string path = txtCombinePath.Text.Trim();
             pdfCount = 0;
             photoCount = 0;
+            currentpdfIndex = 0;
             getPath(path);
             level = GetDirLevel(path);
             string levelName = level == 2 ? "组级别" : "村级别";
@@ -114,6 +115,7 @@ namespace PDFCombineTools
                         continue;
                     }
                     string pdfN = dirName.Split('#')[1].Trim();
+                    //pdfN = EncryptUtil.UnAesStr(pdfN, keyVal, ivVal);
                     string newPdfName = Path.Combine(fbfPath, pdfN + ".pdf");
                     PdfUtility.MergePDF(fileArr, newPdfName);
                     if (ckIsDelete.Checked)
@@ -149,6 +151,7 @@ namespace PDFCombineTools
                             continue;
                         }
                         string pdfN = dirName.Split('#')[1].Trim();
+                        //pdfN = EncryptUtil.UnAesStr(pdfN, keyVal, ivVal);
                         string newPdfName = Path.Combine(cbfPath, pdfN + ".pdf");
                         PdfUtility.MergePDF(fileArr, newPdfName);
                         currentpdfIndex += fileArr.Length;
