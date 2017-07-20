@@ -20,7 +20,7 @@ namespace GenerateTools
         List<PlotModel> plotList = new List<PlotModel>();
         private int totalCount = 0;
         private int currentIndex = 0;
-
+        private double standM = 0.4;
         /// <summary>
         /// UI线程的同步上下文
         /// </summary>
@@ -186,10 +186,10 @@ namespace GenerateTools
                     coordinate.X = Convert.ToDouble(row.Cells[2].Paragraphs[0].Text.Trim()).ToString("f3");
                     coordinate.Y = Convert.ToDouble(row.Cells[3].Paragraphs[0].Text.Trim()).ToString("f3");
                     //先随机 ∆L
-                    coordinate.difL = MathCode.GetRandomNumber(0.05, 0.79, 4).ToString("f3");
+                    coordinate.difL = GetdifL();
                     coordinate.difSquareL = Math.Pow(Convert.ToDouble(coordinate.difL), 2.0).ToString("f3");
                     //再随机 X'
-                    coordinate.cX = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-Convert.ToDouble(coordinate.difL) / 4, Convert.ToDouble(coordinate.difL) / 4, 3)).ToString("f3");
+                    coordinate.cX = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-Convert.ToDouble(coordinate.difL) / 2, Convert.ToDouble(coordinate.difL) / 2, 3)).ToString("f3");
 
                     #region 随机三次X取样值
                     bool flagX = true;
@@ -268,15 +268,40 @@ namespace GenerateTools
             double difLSum = 0;
             foreach (var coordinate in model.CoordinateList)
             {
-                difLSum += Convert.ToDouble(coordinate.difL);
+                difLSum += Convert.ToDouble(coordinate.difSquareL);
             }
-            model.PlotM = (difLSum / (2 * model.CoordinateList.Count)).ToString("f4");
+            model.PlotM = Math.Sqrt(difLSum / (2 * model.CoordinateList.Count)).ToString("f4");
 
             #endregion
+
 
             //最后判断如果 误差>5则重新计算
             if (Convert.ToDouble(model.PercentageError) >= 5)
                 SetPlotModel(model, filePath, true);
+            //如果计算界址点中误差>=0.4则重新计算
+            if (Convert.ToDouble(model.PlotM) >= 0.4)
+                SetPlotModel(model, filePath, true);
+            //standM = GetStandM();
+        }
+
+        private double GetStandM()
+        {
+            var key = MathCode.GetRandomNumber(-3, 7, 4);
+            if (key > 0)
+                return 0.4;
+            else
+                return 0.3;
+        }
+
+        private string GetdifL()
+        {
+            return MathCode.GetRandomNumber(0.1, 0.56, 4).ToString("f3");
+            //    ? MathCode.GetRandomNumber(0.15, 0.75, 4).ToString("f3")
+            //    : MathCode.GetRandomNumber(0.05, 0.75, 4)
+            //var key = MathCode.GetRandomNumber(-1, 1, 4);
+            //return key > 0
+            //    ? MathCode.GetRandomNumber(0.15, 0.75, 4).ToString("f3")
+            //    : MathCode.GetRandomNumber(0.05, 0.75, 4).ToString("f3");
         }
 
         public void Log(string logTxt)
