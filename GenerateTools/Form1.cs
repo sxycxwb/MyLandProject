@@ -21,6 +21,8 @@ namespace GenerateTools
         private int totalCount = 0;
         private int currentIndex = 0;
         private double standM = 0.4;
+        private int calcCount = 0;//赋值计算次数
+        private List<string> errorList = new List<string>();//错误文件列表
         /// <summary>
         /// UI线程的同步上下文
         /// </summary>
@@ -37,6 +39,7 @@ namespace GenerateTools
             InitializeComponent();
             //获取UI线程同步上下文
             m_SyncContext = SynchronizationContext.Current;
+            CheckForIllegalCrossThreadCalls = false;
         }
 
         private void btnSetWordPath_Click(object sender, EventArgs e)
@@ -101,6 +104,19 @@ namespace GenerateTools
 
             File.WriteAllText("excel2pdf/coordinates.json", json);
 
+            if (errorList.Count > 0)
+            {
+                txtErrorMsg.Text = "";
+                StringBuilder sb = new StringBuilder();
+                foreach (var errorFile in errorList)
+                {
+                    sb.AppendLine(Path.GetFileNameWithoutExtension(errorFile));
+                }
+                MessageBox.Show("有错误面积数据，请查看错误文件列表信息！");
+                txtErrorMsg.Text = sb.ToString();
+                return;
+            }
+
             if (
                 MessageBox.Show("采集数据完成，工采集【" + plotList.Count + "】条数据\r\n是否进行生成PDF操作？", "采集数据完成",
                     MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
@@ -143,8 +159,10 @@ namespace GenerateTools
         private void SetPlotModel(PlotModel model, string filePath, bool recursive = false)
         {
             Document document = new Document();
+            TableCollection tables = null;
+
             document.LoadFromFile(filePath);
-            TableCollection tables = document.Sections[0].Tables;
+            tables = document.Sections[0].Tables;
             if (tables.Count == 0)
                 return;
             if (tables[0].Rows.Count == 0)
@@ -153,6 +171,7 @@ namespace GenerateTools
                 return;
             if (tables[0].Rows.Count == 0)
                 return;
+
 
             model.CoordinateList = new List<CoordinatesModel>();
             model.PlotName = tables[0].Rows[2].Cells[1].Paragraphs[0].Text.Trim();//地块名称
@@ -274,7 +293,14 @@ namespace GenerateTools
 
             #endregion
 
-
+            calcCount++;
+            if (calcCount > 20)//如果计算次数超过40，说明有异常发生
+            {
+                errorList.Add(filePath);
+                calcCount = 0;
+                //MessageBox.Show("【" + filePath + "】文件数据有误，请检查！");
+                return;
+            }
             //最后判断如果 误差>5则重新计算
             if (Convert.ToDouble(model.PercentageError) >= 5)
                 SetPlotModel(model, filePath, true);
@@ -282,6 +308,7 @@ namespace GenerateTools
             if (Convert.ToDouble(model.PlotM) >= 0.4)
                 SetPlotModel(model, filePath, true);
             //standM = GetStandM();
+            calcCount = 0;
         }
 
         private double GetStandM()
@@ -295,7 +322,7 @@ namespace GenerateTools
 
         private string GetdifL()
         {
-            return MathCode.GetRandomNumber(0.1, 0.56, 4).ToString("f3");
+            return MathCode.GetRandomNumber(0.3, 0.56, 4).ToString("f3");
             //    ? MathCode.GetRandomNumber(0.15, 0.75, 4).ToString("f3")
             //    : MathCode.GetRandomNumber(0.05, 0.75, 4)
             //var key = MathCode.GetRandomNumber(-1, 1, 4);
@@ -352,6 +379,11 @@ namespace GenerateTools
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Exit();
+        }
+
+        private void btnCopyErrorMsg_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetDataObject(txtErrorMsg.SelectedText);
         }
     }
 }

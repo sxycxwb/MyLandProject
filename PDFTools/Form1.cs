@@ -27,6 +27,7 @@ namespace PDFTools
         private Dictionary<string, List<string>> plotDict = new Dictionary<string, List<string>>();
         private string keyVal = "sinldo.com";
         private string ivVal = "http://www.sinldo.com";
+        
 
         public Form1()
         {
@@ -105,22 +106,31 @@ namespace PDFTools
                 DirectoryInfo[] dirArr = dir.GetDirectories();
                 foreach (DirectoryInfo dirItem in dirArr)
                 {
-                    string dirName = dirItem.Name;
-                    dirPhoto2Pdf(dirItem);//处理图片转PDF
-                    string[] fileArr = getFileArr(dirItem);//获取PDF文件
-                    if (fileArr.Length == 0)
+                    try
                     {
+                        string dirName = dirItem.Name;
+                        var addFlag = CheckPdfJpg(dirItem);
+                        dirPhoto2Pdf(dirItem, addFlag); //处理图片转PDF
+                        string[] fileArr = getFileArr(dirItem); //获取PDF文件
+                        if (fileArr.Length == 0)
+                        {
+                            if (ckIsDelete.Checked)
+                                Directory.Delete(Path.Combine(fbfPath, dirName), true);
+                            continue;
+                        }
+                        string pdfN = dirName.Split('#')[1].Trim();
+                        //pdfN = EncryptUtil.UnAesStr(pdfN, keyVal, ivVal);
+                        string newPdfName = Path.Combine(fbfPath, pdfN + ".pdf");
+                        PdfUtility.MergePDF(fileArr, newPdfName);
                         if (ckIsDelete.Checked)
                             Directory.Delete(Path.Combine(fbfPath, dirName), true);
-                        continue;
+                        currentpdfIndex += fileArr.Length;
                     }
-                    string pdfN = dirName.Split('#')[1].Trim();
-                    //pdfN = EncryptUtil.UnAesStr(pdfN, keyVal, ivVal);
-                    string newPdfName = Path.Combine(fbfPath, pdfN + ".pdf");
-                    PdfUtility.MergePDF(fileArr, newPdfName);
-                    if (ckIsDelete.Checked)
-                        Directory.Delete(Path.Combine(fbfPath, dirName), true);
-                    currentpdfIndex += fileArr.Length;
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("【"+dirItem.FullName+"】路径下文件命名格式有误，请检查！");
+                        throw ex;
+                    }
 
                     int progeress = currentpdfIndex * 100 / processTotalCount;
                     worker.ReportProgress(progeress);
@@ -144,7 +154,8 @@ namespace PDFTools
                     foreach (DirectoryInfo item in cbfDirArr2)
                     {
                         string dirName = item.Name;
-                        dirPhoto2Pdf(item);//处理图片转PDF
+                        var addFlag = CheckPdfJpg(dirItem);
+                        dirPhoto2Pdf(dirItem, addFlag);//处理图片转PDF
                         string[] fileArr = getFileArr(item);
                         if (fileArr.Length == 0)
                         {
@@ -200,13 +211,13 @@ namespace PDFTools
                     string fbfName = row.Cells[0].Value.ToString();
                     string cbfBigCode = row.Cells[2].Value.ToString();
                     fbfCode = txtFBFCode.Text.Trim() + row.Cells[1].Value.ToString();
-                    logGroupInfo += string.Format("【({0}) 组名称：{1},组号：{2},承包方最大编码：{3}】",i+1, fbfName, row.Cells[1].Value, cbfBigCode);
+                    logGroupInfo += string.Format("【({0}) 组名称：{1},组号：{2},承包方最大编码：{3}】", i + 1, fbfName, row.Cells[1].Value, cbfBigCode);
                     CreateDir(makePath, fbfName, fbfCode, cbfBigCode);
                 }
 
                 #region 操作完毕 给予提示
 
-                PublicCode.Log("【自动生成文件夹操作】 村名称【" + countryName + "】发包方代码【" + fbfCode + "】" + (dataGridView1.Rows.Count - 1) + "个组信息: { "+ logGroupInfo+" }");
+                PublicCode.Log("【自动生成文件夹操作】 村名称【" + countryName + "】发包方代码【" + fbfCode + "】" + (dataGridView1.Rows.Count - 1) + "个组信息: { " + logGroupInfo + " }");
                 if (MessageBox.Show(@"是否需要打开生成目录", "操作成功", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
                 {
                     if (Directory.Exists(makePath))
@@ -232,6 +243,31 @@ namespace PDFTools
         }
 
         /// <summary>
+        /// 判断文件夹下是否同时包含PDF和JPG文件
+        /// </summary>
+        /// <param name="dirItem"></param>
+        /// <returns></returns>
+        private bool CheckPdfJpg(DirectoryInfo dirItem)
+        {
+            bool pdf = false;
+            bool jpg = false;
+            FileInfo[] files = dirItem.GetFiles();
+            foreach (FileInfo f in files)
+            {
+                if (pdf && jpg)
+                    continue;
+                if (f.Extension == ".pdf" && !pdf)
+                    pdf = true;
+                if ((f.Extension == ".jpg" || f.Extension == ".png") && !jpg)
+                    jpg = true;
+            }
+            if (pdf && jpg)
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
         /// 选择操作路径
         /// </summary>
         /// <param name="sender"></param>
@@ -254,7 +290,6 @@ namespace PDFTools
         /// <param name="e"></param>
         private void btnCombine_Click(object sender, EventArgs e)
         {
-
             string path = txtCombinePath.Text.Trim();
             pdfCount = 0;
             photoCount = 0;
@@ -266,7 +301,7 @@ namespace PDFTools
                 MessageBox.Show(@"已选择【" + levelName + "】目录\r\n操作路径【" + path + "】\r\n包含【" + pdfCount + "】个pdf文件，【" + photoCount + "】个图片文件\r\n是否合并处理为pdf？", "提示信息-操作前请做好备份", MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Question) == DialogResult.OK)
             {
-                PublicCode.Log("【自动合并生成PDF文件操作】操作路径【"+ path + "】级别 【"+levelName+ "】包含【" + pdfCount + "】个pdf文件,【" + photoCount + "】个图片文件");
+                PublicCode.Log("【自动合并生成PDF文件操作】操作路径【" + path + "】级别 【" + levelName + "】包含【" + pdfCount + "】个pdf文件,【" + photoCount + "】个图片文件");
                 processTotalCount = pdfCount + photoCount;
                 if (pdfCount == 0 && photoCount == 0)
                 {
@@ -379,15 +414,24 @@ namespace PDFTools
         /// 处理文件夹下的图片改为pdf格式
         /// </summary>
         /// <param name="dir"></param>
-        private void dirPhoto2Pdf(DirectoryInfo dir)
+        private void dirPhoto2Pdf(DirectoryInfo dir, bool addFlag = false)
         {
             FileInfo[] files = dir.GetFiles();
             foreach (FileInfo file in files)
             {
                 if (file.Extension == ".jpg" || file.Extension == ".png")//如果是图片格式，则转换为pdf格式
                 {
+                    string fileName = Regex.Replace(Path.GetFileNameWithoutExtension(file.FullName), @"[^\d]*", "");
+                    if (string.IsNullOrEmpty(fileName))//如果为空跳出本次循环
+                        continue;                 
                     string photoPath = file.FullName;
                     string fdfPath = file.FullName.Replace(file.Extension, ".pdf");
+                    if (addFlag)//如果既有pdf又有jpg,则为改名递增
+                    {
+                        int index = Convert.ToInt16(fileName);
+                        index += 10000;
+                        fdfPath = file.FullName.Replace(file.Name, index + ".pdf");
+                    }
                     PdfUtility.ConvertJPG2PDF(photoPath, fdfPath);
                 }
             }
@@ -507,7 +551,7 @@ namespace PDFTools
                         }
                     }
                 }
-                
+
             }
             #endregion
 
@@ -525,7 +569,7 @@ namespace PDFTools
             //{
             //    string code = dirPath.Split('#')[1];
             //    var encrypCode = EncryptUtil.AesStr(code, keyVal, ivVal);
-                
+
             //    dirPath = dirPath.Substring(0, dirPath.IndexOf("#")) + "# "+ encrypCode;
             //}
 
@@ -636,7 +680,7 @@ namespace PDFTools
             p.StartInfo.WorkingDirectory = Path.Combine(Application.StartupPath, "generatetools"); //要启动程序路径
 
             p.StartInfo.FileName = "GenerateTools"; //需要启动的程序名   
-                                                //获得文件夹名称
+                                                    //获得文件夹名称
             p.StartInfo.Arguments = "sinldo.com"; //传递的参数       
             p.Start(); //启动  
         }
