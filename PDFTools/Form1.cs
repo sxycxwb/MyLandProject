@@ -190,14 +190,16 @@ namespace PDFTools
             makePath = Path.Combine(makePath, countryName);
 
             string fbfCode = txtFBFCode.Text.Trim();
-            if (dataGridView1.Rows.Count == 1)
-            {
-                MessageBox.Show("尚未添加组信息！");
-                return;
+            
+            int generCount = 0;
+            if (ddlAddMoudel.SelectedIndex == 0) { 
+                generCount = txtGroupInfo.GetLineFromCharIndex(txtGroupInfo.TextLength);
             }
+            else
+                generCount=dataGridView1.Rows.Count - 1;
 
             //确认填写信息
-            if (MessageBox.Show(@"村名称      【" + countryName + "】\r\n发包方代码【" + fbfCode + "】\r\n本次将生成【" + (dataGridView1.Rows.Count - 1) + "】个组信息", "确认生成信息", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            if (MessageBox.Show(@"村名称      【" + countryName + "】\r\n发包方代码【" + fbfCode + "】\r\n本次将生成【" + generCount + "】个组信息", "确认生成信息", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
                 if (!Directory.Exists(makePath))
                 {
@@ -205,13 +207,27 @@ namespace PDFTools
                 }
 
                 string logGroupInfo = string.Empty;
-                for (int i = 0; i < dataGridView1.Rows.Count - 1; i++)
+                for (int i = 0; i < generCount; i++)
                 {
-                    var row = dataGridView1.Rows[i];
-                    string fbfName = row.Cells[0].Value.ToString();
-                    string cbfBigCode = row.Cells[2].Value.ToString();
-                    fbfCode = txtFBFCode.Text.Trim() + row.Cells[1].Value.ToString();
-                    logGroupInfo += string.Format("【({0}) 组名称：{1},组号：{2},承包方最大编码：{3}】", i + 1, fbfName, row.Cells[1].Value, cbfBigCode);
+                    string fbfName = "", cbfBigCode="",groupNum="";
+                    if (ddlAddMoudel.SelectedIndex == 0)
+                    {
+                        string[] arr = txtGroupInfo.Text.Split('\n');
+                        var row = arr[i].TrimEnd('\r');
+                        var rows = row.Split('\t');
+                        fbfName = rows[0];
+                        groupNum = rows[1];
+                        cbfBigCode = rows[2].PadLeft(4, '0');
+                    }
+                    else
+                    {
+                        var row = dataGridView1.Rows[i];
+                        fbfName = row.Cells[0].Value.ToString();
+                        groupNum = row.Cells[1].Value.ToString();
+                        cbfBigCode = row.Cells[2].Value.ToString();
+                    }
+                    fbfCode = txtFBFCode.Text.Trim() + groupNum;
+                    logGroupInfo += string.Format("【({0}) 组名称：{1},组号：{2},承包方最大编码：{3}】", i + 1, fbfName, groupNum, cbfBigCode);
                     CreateDir(makePath, fbfName, fbfCode, cbfBigCode);
                 }
 

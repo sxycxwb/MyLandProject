@@ -62,6 +62,9 @@
             this.btnSetPath = new System.Windows.Forms.Button();
             this.txtCombinePath = new System.Windows.Forms.TextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.txtGroupInfo = new System.Windows.Forms.TextBox();
+            this.ddlAddMoudel = new System.Windows.Forms.ComboBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -71,7 +74,7 @@
             // btnSetWordPath
             // 
             this.btnSetWordPath.Location = new System.Drawing.Point(291, 24);
-            this.btnSetWordPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSetWordPath.Margin = new System.Windows.Forms.Padding(2);
             this.btnSetWordPath.Name = "btnSetWordPath";
             this.btnSetWordPath.Size = new System.Drawing.Size(108, 27);
             this.btnSetWordPath.TabIndex = 10;
@@ -82,7 +85,7 @@
             // txtWorkPath
             // 
             this.txtWorkPath.Location = new System.Drawing.Point(38, 21);
-            this.txtWorkPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtWorkPath.Margin = new System.Windows.Forms.Padding(2);
             this.txtWorkPath.Multiline = true;
             this.txtWorkPath.Name = "txtWorkPath";
             this.txtWorkPath.Size = new System.Drawing.Size(248, 33);
@@ -106,10 +109,10 @@
             this.groupBox1.Controls.Add(this.txtWorkPath);
             this.groupBox1.Controls.Add(this.btnSetWordPath);
             this.groupBox1.Location = new System.Drawing.Point(14, 8);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.groupBox1.Size = new System.Drawing.Size(770, 465);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox1.Size = new System.Drawing.Size(770, 517);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "1.生成文件夹";
@@ -119,7 +122,7 @@
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("方正兰亭超细黑简体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label8.ForeColor = System.Drawing.Color.DarkRed;
-            this.label8.Location = new System.Drawing.Point(628, 401);
+            this.label8.Location = new System.Drawing.Point(628, 455);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(132, 18);
             this.label8.TabIndex = 27;
@@ -127,8 +130,8 @@
             // 
             // btnSelectPlotCode
             // 
-            this.btnSelectPlotCode.Location = new System.Drawing.Point(470, 314);
-            this.btnSelectPlotCode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSelectPlotCode.Location = new System.Drawing.Point(470, 375);
+            this.btnSelectPlotCode.Margin = new System.Windows.Forms.Padding(2);
             this.btnSelectPlotCode.Name = "btnSelectPlotCode";
             this.btnSelectPlotCode.Size = new System.Drawing.Size(153, 29);
             this.btnSelectPlotCode.TabIndex = 26;
@@ -138,19 +141,19 @@
             // 
             // txtPlotPath
             // 
-            this.txtPlotPath.Location = new System.Drawing.Point(38, 319);
-            this.txtPlotPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtPlotPath.Location = new System.Drawing.Point(38, 380);
+            this.txtPlotPath.Margin = new System.Windows.Forms.Padding(2);
             this.txtPlotPath.Name = "txtPlotPath";
             this.txtPlotPath.Size = new System.Drawing.Size(391, 21);
             this.txtPlotPath.TabIndex = 20;
             // 
             // txtErrorMsg
             // 
-            this.txtErrorMsg.Location = new System.Drawing.Point(27, 354);
-            this.txtErrorMsg.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtErrorMsg.Location = new System.Drawing.Point(27, 416);
+            this.txtErrorMsg.Margin = new System.Windows.Forms.Padding(2);
             this.txtErrorMsg.Multiline = true;
             this.txtErrorMsg.Name = "txtErrorMsg";
-            this.txtErrorMsg.Size = new System.Drawing.Size(596, 103);
+            this.txtErrorMsg.Size = new System.Drawing.Size(596, 95);
             this.txtErrorMsg.TabIndex = 19;
             // 
             // label7
@@ -167,6 +170,9 @@
             // groupBox3
             // 
             this.groupBox3.BackColor = System.Drawing.Color.PaleGoldenrod;
+            this.groupBox3.Controls.Add(this.label9);
+            this.groupBox3.Controls.Add(this.ddlAddMoudel);
+            this.groupBox3.Controls.Add(this.txtGroupInfo);
             this.groupBox3.Controls.Add(this.btnQueryHistory);
             this.groupBox3.Controls.Add(this.btnAddGroup);
             this.groupBox3.Controls.Add(this.dataGridView1);
@@ -178,7 +184,7 @@
             this.groupBox3.Controls.Add(this.txtCBFBigCode);
             this.groupBox3.Location = new System.Drawing.Point(8, 75);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(754, 237);
+            this.groupBox3.Size = new System.Drawing.Size(754, 295);
             this.groupBox3.TabIndex = 17;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "组操作";
@@ -186,7 +192,7 @@
             // btnQueryHistory
             // 
             this.btnQueryHistory.Location = new System.Drawing.Point(631, 48);
-            this.btnQueryHistory.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnQueryHistory.Margin = new System.Windows.Forms.Padding(2);
             this.btnQueryHistory.Name = "btnQueryHistory";
             this.btnQueryHistory.Size = new System.Drawing.Size(108, 24);
             this.btnQueryHistory.TabIndex = 26;
@@ -198,7 +204,7 @@
             // btnAddGroup
             // 
             this.btnAddGroup.Location = new System.Drawing.Point(631, 12);
-            this.btnAddGroup.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnAddGroup.Margin = new System.Windows.Forms.Padding(2);
             this.btnAddGroup.Name = "btnAddGroup";
             this.btnAddGroup.Size = new System.Drawing.Size(108, 24);
             this.btnAddGroup.TabIndex = 25;
@@ -218,7 +224,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(598, 181);
+            this.dataGridView1.Size = new System.Drawing.Size(598, 147);
             this.dataGridView1.TabIndex = 24;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             // 
@@ -251,7 +257,7 @@
             // txtGroupName
             // 
             this.txtGroupName.Location = new System.Drawing.Point(72, 17);
-            this.txtGroupName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtGroupName.Margin = new System.Windows.Forms.Padding(2);
             this.txtGroupName.Name = "txtGroupName";
             this.txtGroupName.Size = new System.Drawing.Size(206, 21);
             this.txtGroupName.TabIndex = 17;
@@ -269,7 +275,7 @@
             // txtGroupNum
             // 
             this.txtGroupNum.Location = new System.Drawing.Point(352, 16);
-            this.txtGroupNum.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtGroupNum.Margin = new System.Windows.Forms.Padding(2);
             this.txtGroupNum.Name = "txtGroupNum";
             this.txtGroupNum.Size = new System.Drawing.Size(53, 21);
             this.txtGroupNum.TabIndex = 19;
@@ -297,7 +303,7 @@
             // txtCBFBigCode
             // 
             this.txtCBFBigCode.Location = new System.Drawing.Point(533, 14);
-            this.txtCBFBigCode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtCBFBigCode.Margin = new System.Windows.Forms.Padding(2);
             this.txtCBFBigCode.Name = "txtCBFBigCode";
             this.txtCBFBigCode.Size = new System.Drawing.Size(84, 21);
             this.txtCBFBigCode.TabIndex = 21;
@@ -305,15 +311,15 @@
             // txtFBFCode
             // 
             this.txtFBFCode.Location = new System.Drawing.Point(497, 46);
-            this.txtFBFCode.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtFBFCode.Margin = new System.Windows.Forms.Padding(2);
             this.txtFBFCode.Name = "txtFBFCode";
             this.txtFBFCode.Size = new System.Drawing.Size(145, 21);
             this.txtFBFCode.TabIndex = 14;
             // 
             // btnMakeDir
             // 
-            this.btnMakeDir.Location = new System.Drawing.Point(648, 429);
-            this.btnMakeDir.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnMakeDir.Location = new System.Drawing.Point(648, 483);
+            this.btnMakeDir.Margin = new System.Windows.Forms.Padding(2);
             this.btnMakeDir.Name = "btnMakeDir";
             this.btnMakeDir.Size = new System.Drawing.Size(108, 28);
             this.btnMakeDir.TabIndex = 23;
@@ -344,7 +350,7 @@
             // txtCountryName
             // 
             this.txtCountryName.Location = new System.Drawing.Point(497, 18);
-            this.txtCountryName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtCountryName.Margin = new System.Windows.Forms.Padding(2);
             this.txtCountryName.Name = "txtCountryName";
             this.txtCountryName.Size = new System.Drawing.Size(235, 21);
             this.txtCountryName.TabIndex = 12;
@@ -357,10 +363,10 @@
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.btnSetPath);
             this.groupBox2.Controls.Add(this.txtCombinePath);
-            this.groupBox2.Location = new System.Drawing.Point(14, 477);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Location = new System.Drawing.Point(14, 529);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox2.Size = new System.Drawing.Size(770, 145);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
@@ -381,7 +387,7 @@
             // btnCombine
             // 
             this.btnCombine.Location = new System.Drawing.Point(639, 97);
-            this.btnCombine.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnCombine.Margin = new System.Windows.Forms.Padding(2);
             this.btnCombine.Name = "btnCombine";
             this.btnCombine.Size = new System.Drawing.Size(109, 37);
             this.btnCombine.TabIndex = 13;
@@ -403,7 +409,7 @@
             // btnSetPath
             // 
             this.btnSetPath.Location = new System.Drawing.Point(639, 46);
-            this.btnSetPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSetPath.Margin = new System.Windows.Forms.Padding(2);
             this.btnSetPath.Name = "btnSetPath";
             this.btnSetPath.Size = new System.Drawing.Size(108, 27);
             this.btnSetPath.TabIndex = 11;
@@ -425,14 +431,46 @@
             this.backgroundWorker1.WorkerSupportsCancellation = true;
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
+            // txtGroupInfo
+            // 
+            this.txtGroupInfo.Location = new System.Drawing.Point(19, 202);
+            this.txtGroupInfo.Margin = new System.Windows.Forms.Padding(2);
+            this.txtGroupInfo.Multiline = true;
+            this.txtGroupInfo.Name = "txtGroupInfo";
+            this.txtGroupInfo.Size = new System.Drawing.Size(596, 86);
+            this.txtGroupInfo.TabIndex = 28;
+            // 
+            // ddlAddMoudel
+            // 
+            this.ddlAddMoudel.FormattingEnabled = true;
+            this.ddlAddMoudel.Items.AddRange(new object[] {
+            "复制粘贴模式",
+            "自主添加模式"});
+            this.ddlAddMoudel.Location = new System.Drawing.Point(627, 202);
+            this.ddlAddMoudel.Name = "ddlAddMoudel";
+            this.ddlAddMoudel.Size = new System.Drawing.Size(121, 20);
+            this.ddlAddMoudel.TabIndex = 29;
+            this.ddlAddMoudel.Text = "复制粘贴模式";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("方正兰亭超细黑简体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label9.ForeColor = System.Drawing.Color.DarkRed;
+            this.label9.Location = new System.Drawing.Point(620, 240);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(127, 18);
+            this.label9.TabIndex = 28;
+            this.label9.Text = "←复制组信息处";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(796, 631);
+            this.ClientSize = new System.Drawing.Size(792, 679);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "扫描文件处理工具";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
@@ -482,6 +520,9 @@
         private System.Windows.Forms.Button btnSelectPlotCode;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btnQueryHistory;
+        private System.Windows.Forms.TextBox txtGroupInfo;
+        private System.Windows.Forms.ComboBox ddlAddMoudel;
+        private System.Windows.Forms.Label label9;
     }
 }
 
