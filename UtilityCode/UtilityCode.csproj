@@ -46,12 +46,14 @@
   <ItemGroup>
     <Compile Include="EncryptUtil.cs" />
     <Compile Include="FileUtility.cs" />
+    <Compile Include="ImageUtility.cs" />
     <Compile Include="MathCode.cs" />
     <Compile Include="PDF\OperateItem.cs" />
     <Compile Include="PDF\PDFFactory.cs" />
     <Compile Include="PDF\PdfSegment.cs" />
     <Compile Include="PDF\PdfUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnCodebase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
