@@ -27,7 +27,7 @@ namespace PDFTools
         private Dictionary<string, List<string>> plotDict = new Dictionary<string, List<string>>();
         private string keyVal = "sinldo.com";
         private string ivVal = "http://www.sinldo.com";
-        
+
 
         public Form1()
         {
@@ -128,7 +128,7 @@ namespace PDFTools
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("【"+dirItem.FullName+"】路径下文件命名格式有误，请检查！");
+                        MessageBox.Show("【" + dirItem.FullName + "】路径下文件命名格式有误，请检查！");
                         throw ex;
                     }
 
@@ -155,7 +155,7 @@ namespace PDFTools
                     {
                         string dirName = item.Name;
                         var addFlag = CheckPdfJpg(dirItem);
-                        dirPhoto2Pdf(dirItem, addFlag);//处理图片转PDF
+                        dirPhoto2Pdf(item, addFlag);//处理图片转PDF
                         string[] fileArr = getFileArr(item);
                         if (fileArr.Length == 0)
                         {
@@ -190,13 +190,14 @@ namespace PDFTools
             makePath = Path.Combine(makePath, countryName);
 
             string fbfCode = txtFBFCode.Text.Trim();
-            
+
             int generCount = 0;
-            if (ddlAddMoudel.SelectedIndex == 0) { 
+            if (ddlAddMoudel.SelectedIndex == 0)
+            {
                 generCount = txtGroupInfo.GetLineFromCharIndex(txtGroupInfo.TextLength);
             }
             else
-                generCount=dataGridView1.Rows.Count - 1;
+                generCount = dataGridView1.Rows.Count - 1;
 
             //确认填写信息
             if (MessageBox.Show(@"村名称      【" + countryName + "】\r\n发包方代码【" + fbfCode + "】\r\n本次将生成【" + generCount + "】个组信息", "确认生成信息", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
@@ -209,7 +210,7 @@ namespace PDFTools
                 string logGroupInfo = string.Empty;
                 for (int i = 0; i < generCount; i++)
                 {
-                    string fbfName = "", cbfBigCode="",groupNum="";
+                    string fbfName = "", cbfBigCode = "", groupNum = "";
                     if (ddlAddMoudel.SelectedIndex == 0)
                     {
                         string[] arr = txtGroupInfo.Text.Split('\n');
@@ -439,7 +440,7 @@ namespace PDFTools
                 {
                     string fileName = Regex.Replace(Path.GetFileNameWithoutExtension(file.FullName), @"[^\d]*", "");
                     if (string.IsNullOrEmpty(fileName))//如果为空跳出本次循环
-                        continue;                 
+                        continue;
                     string photoPath = file.FullName;
                     string fdfPath = file.FullName.Replace(file.Extension, ".pdf");
                     if (addFlag)//如果既有pdf又有jpg,则为改名递增
@@ -611,8 +612,18 @@ namespace PDFTools
             foreach (FileInfo f in fil)
             {
                 string fileName = f.Name;
-                string cbfCode = fileName.Split('_')[0];
-                string plotCode = fileName.Split('_')[1];
+                string cbfCode = "";
+                string plotCode = "";
+                if (comboBox1.SelectedIndex == 0)
+                {
+                    cbfCode = fileName.Split('_')[0];
+                    plotCode = fileName.Split('_')[2];
+                }
+                else if (comboBox1.SelectedIndex == 1)
+                {
+                    cbfCode = fileName.Split('_')[0];
+                    plotCode = Regex.Replace(fileName.Split('_')[2], @"[^0-9]+", "");
+                }
                 if (!plotDict.ContainsKey(cbfCode))
                 {
                     var list = new List<string>();
@@ -685,6 +696,14 @@ namespace PDFTools
             Application.Exit();//程序退出
         }
 
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox1.SelectedIndex == 0)
+                lbTxtStyle.Text = "文件名格式：<承包方编码>_<地块编码>_界址点成果表";
+            if (comboBox1.SelectedIndex == 1)
+                lbTxtStyle.Text = "文件名格式：<承包方编码>_<姓名>_界址点成果表<地块编码>";
+        }
+
         /// <summary>
         /// 开启界址点面积精度评价表生成工具
         /// </summary>
@@ -700,5 +719,7 @@ namespace PDFTools
             p.StartInfo.Arguments = "sinldo.com"; //传递的参数       
             p.Start(); //启动  
         }
+
+
     }
 }

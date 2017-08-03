@@ -37,6 +37,9 @@
             this.txtErrorMsg = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.ddlAddMoudel = new System.Windows.Forms.ComboBox();
+            this.txtGroupInfo = new System.Windows.Forms.TextBox();
             this.btnQueryHistory = new System.Windows.Forms.Button();
             this.btnAddGroup = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -62,9 +65,8 @@
             this.btnSetPath = new System.Windows.Forms.Button();
             this.txtCombinePath = new System.Windows.Forms.TextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.txtGroupInfo = new System.Windows.Forms.TextBox();
-            this.ddlAddMoudel = new System.Windows.Forms.ComboBox();
-            this.label9 = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.lbTxtStyle = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -95,6 +97,8 @@
             // groupBox1
             // 
             this.groupBox1.BackColor = System.Drawing.Color.Gainsboro;
+            this.groupBox1.Controls.Add(this.lbTxtStyle);
+            this.groupBox1.Controls.Add(this.comboBox1);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.btnSelectPlotCode);
             this.groupBox1.Controls.Add(this.txtPlotPath);
@@ -149,11 +153,11 @@
             // 
             // txtErrorMsg
             // 
-            this.txtErrorMsg.Location = new System.Drawing.Point(27, 416);
+            this.txtErrorMsg.Location = new System.Drawing.Point(27, 424);
             this.txtErrorMsg.Margin = new System.Windows.Forms.Padding(2);
             this.txtErrorMsg.Multiline = true;
             this.txtErrorMsg.Name = "txtErrorMsg";
-            this.txtErrorMsg.Size = new System.Drawing.Size(596, 95);
+            this.txtErrorMsg.Size = new System.Drawing.Size(596, 87);
             this.txtErrorMsg.TabIndex = 19;
             // 
             // label7
@@ -188,6 +192,38 @@
             this.groupBox3.TabIndex = 17;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "组操作";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("方正兰亭超细黑简体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label9.ForeColor = System.Drawing.Color.DarkRed;
+            this.label9.Location = new System.Drawing.Point(620, 240);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(127, 18);
+            this.label9.TabIndex = 28;
+            this.label9.Text = "←复制组信息处";
+            // 
+            // ddlAddMoudel
+            // 
+            this.ddlAddMoudel.FormattingEnabled = true;
+            this.ddlAddMoudel.Items.AddRange(new object[] {
+            "复制粘贴模式",
+            "自主添加模式"});
+            this.ddlAddMoudel.Location = new System.Drawing.Point(627, 202);
+            this.ddlAddMoudel.Name = "ddlAddMoudel";
+            this.ddlAddMoudel.Size = new System.Drawing.Size(121, 20);
+            this.ddlAddMoudel.TabIndex = 29;
+            this.ddlAddMoudel.Text = "复制粘贴模式";
+            // 
+            // txtGroupInfo
+            // 
+            this.txtGroupInfo.Location = new System.Drawing.Point(19, 202);
+            this.txtGroupInfo.Margin = new System.Windows.Forms.Padding(2);
+            this.txtGroupInfo.Multiline = true;
+            this.txtGroupInfo.Name = "txtGroupInfo";
+            this.txtGroupInfo.Size = new System.Drawing.Size(596, 86);
+            this.txtGroupInfo.TabIndex = 28;
             // 
             // btnQueryHistory
             // 
@@ -431,37 +467,29 @@
             this.backgroundWorker1.WorkerSupportsCancellation = true;
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
-            // txtGroupInfo
+            // comboBox1
             // 
-            this.txtGroupInfo.Location = new System.Drawing.Point(19, 202);
-            this.txtGroupInfo.Margin = new System.Windows.Forms.Padding(2);
-            this.txtGroupInfo.Multiline = true;
-            this.txtGroupInfo.Name = "txtGroupInfo";
-            this.txtGroupInfo.Size = new System.Drawing.Size(596, 86);
-            this.txtGroupInfo.TabIndex = 28;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "默认Doc模式",
+            "Excel新模式"});
+            this.comboBox1.Location = new System.Drawing.Point(634, 380);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 20);
+            this.comboBox1.TabIndex = 30;
+            this.comboBox1.Text = "默认Doc模式";
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
-            // ddlAddMoudel
+            // lbTxtStyle
             // 
-            this.ddlAddMoudel.FormattingEnabled = true;
-            this.ddlAddMoudel.Items.AddRange(new object[] {
-            "复制粘贴模式",
-            "自主添加模式"});
-            this.ddlAddMoudel.Location = new System.Drawing.Point(627, 202);
-            this.ddlAddMoudel.Name = "ddlAddMoudel";
-            this.ddlAddMoudel.Size = new System.Drawing.Size(121, 20);
-            this.ddlAddMoudel.TabIndex = 29;
-            this.ddlAddMoudel.Text = "复制粘贴模式";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("方正兰亭超细黑简体", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label9.ForeColor = System.Drawing.Color.DarkRed;
-            this.label9.Location = new System.Drawing.Point(620, 240);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(127, 18);
-            this.label9.TabIndex = 28;
-            this.label9.Text = "←复制组信息处";
+            this.lbTxtStyle.AutoSize = true;
+            this.lbTxtStyle.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lbTxtStyle.ForeColor = System.Drawing.Color.Red;
+            this.lbTxtStyle.Location = new System.Drawing.Point(38, 407);
+            this.lbTxtStyle.Name = "lbTxtStyle";
+            this.lbTxtStyle.Size = new System.Drawing.Size(293, 12);
+            this.lbTxtStyle.TabIndex = 31;
+            this.lbTxtStyle.Text = "文件名格式：<承包方编码>_<地块编码>_界址点成果表";
             // 
             // Form1
             // 
@@ -523,6 +551,8 @@
         private System.Windows.Forms.TextBox txtGroupInfo;
         private System.Windows.Forms.ComboBox ddlAddMoudel;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label lbTxtStyle;
     }
 }
 
