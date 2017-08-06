@@ -23,6 +23,7 @@ namespace GenerateTools
         private double standM = 0.4;
         private int calcCount = 0;//赋值计算次数
         private List<string> errorList = new List<string>();//错误文件列表
+
         /// <summary>
         /// UI线程的同步上下文
         /// </summary>

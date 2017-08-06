@@ -98,88 +98,109 @@ namespace PDFTools
                 }
             }
             #endregion
-            foreach (var str in dirList)
+
+            string currentFilePath = "";
+
+            try
             {
-                #region 发包方处理
-                string fbfPath = Path.Combine(str, "发包方");
-                DirectoryInfo dir = new DirectoryInfo(fbfPath);
-                DirectoryInfo[] dirArr = dir.GetDirectories();
-                foreach (DirectoryInfo dirItem in dirArr)
+
+                foreach (var str in dirList)
                 {
-                    try
+                    #region 发包方处理
+
+                    string fbfPath = Path.Combine(str, "发包方");
+                    DirectoryInfo dir = new DirectoryInfo(fbfPath);
+                    DirectoryInfo[] dirArr = dir.GetDirectories();
+                    foreach (DirectoryInfo dirItem in dirArr)
                     {
-                        string dirName = dirItem.Name;
-                        var addFlag = CheckPdfJpg(dirItem);
-                        dirPhoto2Pdf(dirItem, addFlag); //处理图片转PDF
-                        string[] fileArr = getFileArr(dirItem); //获取PDF文件
-                        if (fileArr.Length == 0)
+                        try
                         {
-                            if (ckIsDelete.Checked)
+                            string dirName = dirItem.Name;
+                            currentFilePath = dirItem.FullName;
+                            var addFlag = CombineToPDF.CheckPdfJpg(dirItem);
+                            CombineToPDF.dirPhoto2Pdf(dirItem, addFlag); //处理图片转PDF
+                            string[] fileArr = CombineToPDF.getFileArr(dirItem); //获取PDF文件
+
+                            if (fileArr.Length == 0)
+                                continue;
+
+                            string pdfN = dirName.Split('#')[1].Trim();
+                            string newPdfName = Path.Combine(fbfPath, pdfN + ".pdf");
+                            PdfUtility.MergePDF(fileArr, newPdfName);
+
+                            int fileCount = dir.GetFiles().Length; //获取文件夹下是否有文件，如果没有任何文件则不进行删除
+                            if (ckIsDelete.Checked && fileCount > 0) //文件夹下如果没有任何文件则不进行删除
                                 Directory.Delete(Path.Combine(fbfPath, dirName), true);
-                            continue;
+                            currentpdfIndex += fileArr.Length;
                         }
-                        string pdfN = dirName.Split('#')[1].Trim();
-                        //pdfN = EncryptUtil.UnAesStr(pdfN, keyVal, ivVal);
-                        string newPdfName = Path.Combine(fbfPath, pdfN + ".pdf");
-                        PdfUtility.MergePDF(fileArr, newPdfName);
-                        if (ckIsDelete.Checked)
-                            Directory.Delete(Path.Combine(fbfPath, dirName), true);
-                        currentpdfIndex += fileArr.Length;
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("【" + dirItem.FullName + "】路径下文件命名格式有误，请检查！");
-                        throw ex;
-                    }
-
-                    int progeress = currentpdfIndex * 100 / processTotalCount;
-                    worker.ReportProgress(progeress);
-                    if (progeress == 100)  // 如果用户取消则跳出处理数据代码 
-                    {
-                        e.Cancel = true;
-                        ShowCompletePath();
-                        break;
-                    }
-                }
-                #endregion
-
-                #region 承包方处理
-                string cbfPath = Path.Combine(str, "承包方");
-                DirectoryInfo cbfDir = new DirectoryInfo(cbfPath);
-                DirectoryInfo[] cbfDirArr = cbfDir.GetDirectories();
-                foreach (DirectoryInfo dirItem in cbfDirArr)
-                {
-                    string dirItemName = dirItem.Name;
-                    DirectoryInfo[] cbfDirArr2 = dirItem.GetDirectories();
-                    foreach (DirectoryInfo item in cbfDirArr2)
-                    {
-                        string dirName = item.Name;
-                        var addFlag = CheckPdfJpg(dirItem);
-                        dirPhoto2Pdf(item, addFlag);//处理图片转PDF
-                        string[] fileArr = getFileArr(item);
-                        if (fileArr.Length == 0)
+                        catch (Exception ex)
                         {
-                            continue;
+                            MessageBox.Show("【" + dirItem.FullName + "】路径下文件命名格式有误，请检查！");
+                            throw ex;
                         }
-                        string pdfN = dirName.Split('#')[1].Trim();
-                        //pdfN = EncryptUtil.UnAesStr(pdfN, keyVal, ivVal);
-                        string newPdfName = Path.Combine(cbfPath, pdfN + ".pdf");
-                        PdfUtility.MergePDF(fileArr, newPdfName);
-                        currentpdfIndex += fileArr.Length;
 
                         int progeress = currentpdfIndex * 100 / processTotalCount;
                         worker.ReportProgress(progeress);
-                        if (progeress == 100)  // 如果用户取消则跳出处理数据代码 
+                        if (progeress == 100) // 如果用户取消则跳出处理数据代码 
                         {
                             e.Cancel = true;
                             ShowCompletePath();
                             break;
                         }
                     }
-                    if (ckIsDelete.Checked)
-                        Directory.Delete(Path.Combine(cbfPath, dirItemName), true);
+
+                    #endregion
+
+                    #region 承包方处理
+
+                    string cbfPath = Path.Combine(str, "承包方");
+                    DirectoryInfo cbfDir = new DirectoryInfo(cbfPath);
+                    DirectoryInfo[] cbfDirArr = cbfDir.GetDirectories();
+                    foreach (DirectoryInfo dirItem in cbfDirArr)
+                    {
+                        string dirItemName = dirItem.Name;
+                        DirectoryInfo[] cbfDirArr2 = dirItem.GetDirectories();
+                        foreach (DirectoryInfo item in cbfDirArr2)
+                        {
+                            string dirName = item.Name;
+                            currentFilePath = item.FullName;
+                            var addFlag = CombineToPDF.CheckPdfJpg(dirItem);
+                            CombineToPDF.dirPhoto2Pdf(item, addFlag); //处理图片转PDF
+                            string[] fileArr = CombineToPDF.getFileArr(item);
+                            if (fileArr.Length == 0)
+                                continue;
+
+                            string pdfN = dirName.Split('#')[1].Trim();
+                            //pdfN = EncryptUtil.UnAesStr(pdfN, keyVal, ivVal);
+                            string newPdfName = Path.Combine(cbfPath, pdfN + ".pdf");
+                            PdfUtility.MergePDF(fileArr, newPdfName);
+
+                            int fileCount2 = item.GetFiles().Length; //获取文件夹下是否有文件，如果没有任何文件则不进行删除
+                            if (ckIsDelete.Checked && fileCount2 > 0) //文件夹下如果没有任何文件则不进行删除
+                                Directory.Delete(item.FullName, true);
+                            currentpdfIndex += fileArr.Length;
+
+                            int progeress = currentpdfIndex * 100 / processTotalCount;
+                            worker.ReportProgress(progeress);
+                            if (progeress == 100) // 如果用户取消则跳出处理数据代码 
+                            {
+                                e.Cancel = true;
+                                ShowCompletePath();
+                                break;
+                            }
+                        }
+                        int fileCount = dirItem.GetDirectories().Length; //获取文件夹下是否有文件夹，如果没有任何文件夹则进行删除
+                        if (ckIsDelete.Checked && fileCount == 0) //文件夹下如果没有任何文件则不进行删除
+                            Directory.Delete(Path.Combine(cbfPath, dirItemName), true);
+                    }
+
+                    #endregion
                 }
-                #endregion
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(currentFilePath +"文件夹下文件有误，请检查！\r\n错误信息："+ ex.Message);
+                return;
             }
         }
 
@@ -229,7 +250,7 @@ namespace PDFTools
                     }
                     fbfCode = txtFBFCode.Text.Trim() + groupNum;
                     logGroupInfo += string.Format("【({0}) 组名称：{1},组号：{2},承包方最大编码：{3}】", i + 1, fbfName, groupNum, cbfBigCode);
-                    CreateDir(makePath, fbfName, fbfCode, cbfBigCode);
+                    CreateDir(makePath, groupNum, fbfCode, cbfBigCode);
                 }
 
                 #region 操作完毕 给予提示
@@ -260,31 +281,6 @@ namespace PDFTools
         }
 
         /// <summary>
-        /// 判断文件夹下是否同时包含PDF和JPG文件
-        /// </summary>
-        /// <param name="dirItem"></param>
-        /// <returns></returns>
-        private bool CheckPdfJpg(DirectoryInfo dirItem)
-        {
-            bool pdf = false;
-            bool jpg = false;
-            FileInfo[] files = dirItem.GetFiles();
-            foreach (FileInfo f in files)
-            {
-                if (pdf && jpg)
-                    continue;
-                if (f.Extension == ".pdf" && !pdf)
-                    pdf = true;
-                if ((f.Extension == ".jpg" || f.Extension == ".png") && !jpg)
-                    jpg = true;
-            }
-            if (pdf && jpg)
-                return true;
-            else
-                return false;
-        }
-
-        /// <summary>
         /// 选择操作路径
         /// </summary>
         /// <param name="sender"></param>
@@ -312,7 +308,7 @@ namespace PDFTools
             photoCount = 0;
             currentpdfIndex = 0;
             getPath(path);
-            level = GetDirLevel(path);
+            level = CombineToPDF.GetDirLevel(path);
             string levelName = level == 2 ? "组级别" : "村级别";
             if (
                 MessageBox.Show(@"已选择【" + levelName + "】目录\r\n操作路径【" + path + "】\r\n包含【" + pdfCount + "】个pdf文件，【" + photoCount + "】个图片文件\r\n是否合并处理为pdf？", "提示信息-操作前请做好备份", MessageBoxButtons.OKCancel,
@@ -385,29 +381,7 @@ namespace PDFTools
             return dict;
         }
 
-        private int GetDirLevel(string path)
-        {
-            var dir = new DirectoryInfo(path);
-
-            var dii = dir.GetDirectories();
-            if (dii.Length == 0)
-                return 1;
-            foreach (DirectoryInfo d in dii)
-            {
-                if (d.Name == "发包方" || d.Name == "承包方")
-                    return 2;
-            }
-            //二级
-            var dirLevel2 = new DirectoryInfo(dii[0].FullName);
-            var dii2 = dirLevel2.GetDirectories();
-            foreach (DirectoryInfo d in dii2)
-            {
-                if (d.Name == "发包方" || d.Name == "承包方")
-                    return 3;
-            }
-            return 1;
-        }
-
+       
         public void getPath(string path)
         {
             DirectoryInfo dir = new DirectoryInfo(path);
@@ -426,83 +400,6 @@ namespace PDFTools
                 getPath(d.FullName);
             }
         }
-
-        /// <summary>
-        /// 处理文件夹下的图片改为pdf格式
-        /// </summary>
-        /// <param name="dir"></param>
-        private void dirPhoto2Pdf(DirectoryInfo dir, bool addFlag = false)
-        {
-            FileInfo[] files = dir.GetFiles();
-            foreach (FileInfo file in files)
-            {
-                if (file.Extension == ".jpg" || file.Extension == ".png")//如果是图片格式，则转换为pdf格式
-                {
-                    string fileName = Regex.Replace(Path.GetFileNameWithoutExtension(file.FullName), @"[^\d]*", "");
-                    if (string.IsNullOrEmpty(fileName))//如果为空跳出本次循环
-                        continue;
-                    string photoPath = file.FullName;
-                    string fdfPath = file.FullName.Replace(file.Extension, ".pdf");
-                    if (addFlag)//如果既有pdf又有jpg,则为改名递增
-                    {
-                        int index = Convert.ToInt16(fileName);
-                        index += 10000;
-                        fdfPath = file.FullName.Replace(file.Name, index + ".pdf");
-                    }
-                    PdfUtility.ConvertJPG2PDF(photoPath, fdfPath);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 获取文件夹下pdf文件列表（按升序排序）
-        /// </summary>
-        /// <param name="dir"></param>
-        /// <returns></returns>
-        private string[] getFileArr(DirectoryInfo dir)
-        {
-            FileInfo[] files = dir.GetFiles();
-            Dictionary<int, string> dict = new Dictionary<int, string>();
-            ArrayList list = new ArrayList();
-
-            foreach (FileInfo file in files)
-            {
-                if (file.Extension == ".pdf")
-                {
-                    string fileName = Regex.Replace(Path.GetFileNameWithoutExtension(file.FullName), @"[^\d]*", "");
-                    if (string.IsNullOrEmpty(fileName))//如果为空跳出本次循环
-                        continue;
-                    int index = Convert.ToInt16(fileName);
-                    string fileFullName = file.FullName;
-                    dict.Add(index, fileFullName);
-                    list.Add(index);
-                }
-            }
-            Sort(list);//大小排序
-            ArrayList fileList = new ArrayList();
-            foreach (int item in list)
-            {
-                fileList.Add(dict[item]);
-            }
-
-            return (string[])fileList.ToArray(Type.GetType("System.String"));
-        }
-
-        public void Sort(ArrayList list)
-        {
-            for (int i = 1; i < list.Count; ++i)
-            {
-                int t = Convert.ToInt32(list[i]);
-                int j = i;
-                while ((j > 0) && (Convert.ToInt32(list[j - 1]) > t))
-                {
-                    list[j] = list[j - 1];
-                    --j;
-                }
-                list[j] = t;
-            }
-        }
-
 
 
         /// <summary>
@@ -611,7 +508,7 @@ namespace PDFTools
             DirectoryInfo[] dii = dir.GetDirectories();
             foreach (FileInfo f in fil)
             {
-                string fileName = f.Name;
+                string fileName = Path.GetFileNameWithoutExtension(f.FullName);
                 string cbfCode = "";
                 string plotCode = "";
                 if (comboBox1.SelectedIndex == 0)
@@ -622,7 +519,8 @@ namespace PDFTools
                 else if (comboBox1.SelectedIndex == 1)
                 {
                     cbfCode = fileName.Split('_')[0];
-                    plotCode = Regex.Replace(fileName.Split('_')[2], @"[^0-9]+", "");
+                    string[] arr = fileName.Split('_');
+                    plotCode = Regex.Replace(arr[arr.Length - 1], @"[^0-9]+", "");
                 }
                 if (!plotDict.ContainsKey(cbfCode))
                 {

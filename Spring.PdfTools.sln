@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spring.Model", "Spring.Mode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PDFCombineTools", "PDFCombineTools\PDFCombineTools.csproj", "{2DD5BA6A-7CDE-4BEB-B994-4EAF40550587}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationTool", "AuthorizationTool\AuthorizationTool.csproj", "{92C9C308-654D-4464-BDE1-B9874850591D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{2DD5BA6A-7CDE-4BEB-B994-4EAF40550587}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DD5BA6A-7CDE-4BEB-B994-4EAF40550587}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DD5BA6A-7CDE-4BEB-B994-4EAF40550587}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92C9C308-654D-4464-BDE1-B9874850591D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92C9C308-654D-4464-BDE1-B9874850591D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92C9C308-654D-4464-BDE1-B9874850591D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92C9C308-654D-4464-BDE1-B9874850591D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
