@@ -64,7 +64,7 @@ namespace Excel2Pdf
                 //在线程中更新UI（通过UI线程同步上下文m_SyncContext）
                 m_SyncContext.Post(UpdateUIProcess, (i + 1) * 100 / plotList.Count);
             }
-            ExecCoordinateSummary(plotList);
+            ExecCoordinateSummary(plotList);//生成汇总表
 
 
             if (MessageBox.Show(@"是否需要打开生成目录", "操作成功", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
@@ -193,7 +193,8 @@ namespace Excel2Pdf
                 Directory.CreateDirectory(generatePath);
             var dict = GetConfigDict("JZD");
             var zjdCode = dict.Keys.First();
-            generatePath = Path.Combine(generatePath, zjdCode + model.PlotCode);
+            string groupNum = model.PlotCode.Substring(12, 2);
+            generatePath = Path.Combine(generatePath, groupNum,zjdCode + model.PlotCode);//每个生成的文件放到对应组号下面
 
             workbook.SaveToFile(generatePath + ".xlsx", ExcelVersion.Version2010);
 

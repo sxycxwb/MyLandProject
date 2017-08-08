@@ -36,6 +36,9 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NPOI">
+      <HintPath>..\Lib\NPOI.dll</HintPath>
+    </Reference>
     <Reference Include="Spire.Doc, Version=5.7.0.54020, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
       <HintPath>..\packages\FreeSpire.Doc.5.7\lib\net20\Spire.Doc.dll</HintPath>
       <Private>True</Private>
