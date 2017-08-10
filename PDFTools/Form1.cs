@@ -27,6 +27,7 @@ namespace PDFTools
         private Dictionary<string, List<string>> plotDict = new Dictionary<string, List<string>>();
         private string keyVal = "sinldo.com";
         private string ivVal = "http://www.sinldo.com";
+        private string currentFile = "";
 
 
         public Form1()
@@ -71,7 +72,7 @@ namespace PDFTools
             {
                 string foldPath = dialog.SelectedPath;
                 txtPlotPath.Text = foldPath;
-
+                plotDict=new Dictionary<string, List<string>>();
                 GetPlotCodeDict(foldPath);
                 ShowErrorMsg();
             }
@@ -458,7 +459,7 @@ namespace PDFTools
                     if (plotDict.ContainsKey(fbfFullCode))
                     {
                         var plotList = plotDict[fbfFullCode]; //通过承包方代码查找地块编码
-                        foreach (var plotCode in plotList)
+                        foreach (var plotCode in  plotList)
                         {
                             string dir = Path.Combine(singlecbfPath, plotValue + " # " + plotKey + plotCode);
                             CreateDir(dir);
@@ -503,44 +504,53 @@ namespace PDFTools
         /// </summary>
         private void GetPlotCodeDict(string dictPath)
         {
-            DirectoryInfo dir = new DirectoryInfo(dictPath);
-            FileInfo[] fil = dir.GetFiles();
-            DirectoryInfo[] dii = dir.GetDirectories();
-            foreach (FileInfo f in fil)
+            try
             {
-                string fileName = Path.GetFileNameWithoutExtension(f.FullName);
-                string cbfCode = "";
-                string plotCode = "";
-                if (comboBox1.SelectedIndex == 0)
+                DirectoryInfo dir = new DirectoryInfo(dictPath);
+                FileInfo[] fil = dir.GetFiles();
+                DirectoryInfo[] dii = dir.GetDirectories();
+                foreach (FileInfo f in fil)
                 {
-                    cbfCode = fileName.Split('_')[0];
-                    plotCode = fileName.Split('_')[2];
-                }
-                else if (comboBox1.SelectedIndex == 1)
-                {
-                    cbfCode = fileName.Split('_')[0];
-                    string[] arr = fileName.Split('_');
-                    plotCode = Regex.Replace(arr[arr.Length - 1], @"[^0-9]+", "");
-                }
-                if (!plotDict.ContainsKey(cbfCode))
-                {
-                    var list = new List<string>();
-                    list.Add(plotCode);
-                    plotDict.Add(cbfCode, list);
-                }
-                else
-                {
-                    var list = plotDict[cbfCode];
-                    if (!list.Contains(plotCode))
+                    string fileName = Path.GetFileNameWithoutExtension(f.FullName);
+                    currentFile = f.Name;
+                    string cbfCode = "";
+                    string plotCode = "";
+                    if (comboBox1.SelectedIndex == 0)
+                    {
+                        cbfCode = fileName.Split('_')[0];
+                        plotCode = string.IsNullOrEmpty(Regex.Replace(fileName.Split('_')[2], @"[^0-9]+", ""))? Regex.Replace(fileName.Split('_')[1], @"[^0-9]+", ""): Regex.Replace(fileName.Split('_')[2], @"[^0-9]+", "");
+                    }
+                    else if (comboBox1.SelectedIndex == 1)
+                    {
+                        cbfCode = fileName.Split('_')[0];
+                        string[] arr = fileName.Split('_');
+                        plotCode = Regex.Replace(arr[arr.Length - 1], @"[^0-9]+", "");
+                    }
+                    if (!plotDict.ContainsKey(cbfCode))
+                    {
+                        var list = new List<string>();
                         list.Add(plotCode);
-                    plotDict[cbfCode] = list;
-                }
-                //获取子文件夹内的文件列表，递归遍历
-                foreach (DirectoryInfo d in dii)
-                {
-                    GetPlotCodeDict(d.FullName);
+                        plotDict.Add(cbfCode, list);
+                    }
+                    else
+                    {
+                        var list = plotDict[cbfCode];
+                        if (!list.Contains(plotCode))
+                            list.Add(plotCode);
+                        plotDict[cbfCode] = list;
+                    }
+                    //获取子文件夹内的文件列表，递归遍历
+                    foreach (DirectoryInfo d in dii)
+                    {
+                        GetPlotCodeDict(d.FullName);
+                    }
                 }
             }
+            catch(Exception ex)
+            {
+                MessageBox.Show("未能识别的文件名称：" + currentFile);
+            }
+        
 
         }
 

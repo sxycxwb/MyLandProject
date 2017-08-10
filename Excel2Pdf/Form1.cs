@@ -231,7 +231,8 @@ namespace Excel2Pdf
 
             var dict2 = GetConfigDict("AREA");
             var areaCode = dict2.Keys.First();
-            generatePath2 = Path.Combine(generatePath2, areaCode + model.PlotCode);
+            groupNum = model.PlotCode.Substring(12, 2);
+            generatePath2 = Path.Combine(generatePath2, groupNum, areaCode + model.PlotCode);
 
             workbook2.SaveToFile(generatePath2 + ".xlsx", ExcelVersion.Version2010);
             PdfUtility.ConvertExcel2PDF(generatePath2 + ".xlsx", generatePath2 + ".pdf");

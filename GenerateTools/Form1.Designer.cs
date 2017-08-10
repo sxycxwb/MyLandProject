@@ -48,7 +48,7 @@
             // txtWorkPath
             // 
             this.txtWorkPath.Location = new System.Drawing.Point(11, 21);
-            this.txtWorkPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtWorkPath.Margin = new System.Windows.Forms.Padding(2);
             this.txtWorkPath.Multiline = true;
             this.txtWorkPath.Name = "txtWorkPath";
             this.txtWorkPath.Size = new System.Drawing.Size(248, 53);
@@ -57,7 +57,7 @@
             // btnSetWordPath
             // 
             this.btnSetWordPath.Location = new System.Drawing.Point(263, 47);
-            this.btnSetWordPath.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSetWordPath.Margin = new System.Windows.Forms.Padding(2);
             this.btnSetWordPath.Name = "btnSetWordPath";
             this.btnSetWordPath.Size = new System.Drawing.Size(136, 27);
             this.btnSetWordPath.TabIndex = 12;
@@ -68,7 +68,7 @@
             // btnStart
             // 
             this.btnStart.Location = new System.Drawing.Point(261, 181);
-            this.btnStart.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnStart.Margin = new System.Windows.Forms.Padding(2);
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(136, 27);
             this.btnStart.TabIndex = 15;
@@ -135,7 +135,7 @@
             // txtErrorMsg
             // 
             this.txtErrorMsg.Location = new System.Drawing.Point(11, 253);
-            this.txtErrorMsg.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtErrorMsg.Margin = new System.Windows.Forms.Padding(2);
             this.txtErrorMsg.Multiline = true;
             this.txtErrorMsg.Name = "txtErrorMsg";
             this.txtErrorMsg.Size = new System.Drawing.Size(388, 147);
@@ -154,10 +154,10 @@
             // 
             // btnCopyErrorMsg
             // 
-            this.btnCopyErrorMsg.Location = new System.Drawing.Point(261, 229);
-            this.btnCopyErrorMsg.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnCopyErrorMsg.Location = new System.Drawing.Point(261, 223);
+            this.btnCopyErrorMsg.Margin = new System.Windows.Forms.Padding(2);
             this.btnCopyErrorMsg.Name = "btnCopyErrorMsg";
-            this.btnCopyErrorMsg.Size = new System.Drawing.Size(136, 19);
+            this.btnCopyErrorMsg.Size = new System.Drawing.Size(136, 25);
             this.btnCopyErrorMsg.TabIndex = 25;
             this.btnCopyErrorMsg.Text = "复制错误信息";
             this.btnCopyErrorMsg.UseVisualStyleBackColor = true;
