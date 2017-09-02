@@ -26,7 +26,7 @@ namespace GenerateTools
         private int currentIndex = 0;
         private double standM = 0.4;
         private int calcCount = 0;//赋值计算次数
-        private List<string> errorList = new List<string>();//错误文件列表
+        private Dictionary<string, string> errorDic = new Dictionary<string, string>();//错误文件列表
 
         /// <summary>
         /// UI线程的同步上下文
@@ -108,11 +108,16 @@ namespace GenerateTools
                 }
                 plotModel.CbfCode = cbfCode;
                 plotModel.PlotCode = plotCode;
+                plotModel.IsGenerate = true;//默认会生成PDF
+
                 if (comboBox1.SelectedIndex == 0)//doc模式
                     SetPlotModel_DOC(plotModel, f.FullName);
                 else if (comboBox1.SelectedIndex == 1)//excel模式
                     SetPlotModel_EXCEL(plotModel, f.FullName);
-                plotList.Add(plotModel);
+
+                if (!errorDic.ContainsKey(plotModel.PlotCode))
+                    plotList.Add(plotModel);
+
                 m_SyncContext.Post(UpdateUIProcess, currentIndex * 100 / totalCount);
             }
             //将结果集持久化保存json
@@ -123,25 +128,48 @@ namespace GenerateTools
 
             File.WriteAllText("excel2pdf/coordinates.json", json);
 
-            if (errorList.Count > 0)
+            if (errorDic.Count > 0)
             {
                 txtErrorMsg.Text = "";
                 StringBuilder sb = new StringBuilder();
-                foreach (var errorFile in errorList)
+                foreach (var errorFile in errorDic)
                 {
-                    sb.AppendLine(errorFile);
+                    sb.AppendLine(errorFile.Value);
                 }
-                MessageBox.Show("有错误面积数据，请查看错误文件列表信息！");
+                MessageBox.Show("有错误面积数据，请查看错误文件列表信息，即将生成的PDF文件不包含这些错误数据，请手工修改完善！");
                 txtErrorMsg.Text = sb.ToString();
-                return;
             }
 
+            string showInfo = "采集数据完成，工采集【" + plotList.Count + "】条数据\r\n是否进行生成PDF操作？";
+            if (errorDic.Count > 0)
+            {
+                showInfo = "采集数据完成，工采集【" + plotList.Count + "】条数据；\r\n发现错误文件，是否打开错误文件目录，同时继续生成无错误PDF文件？";
+            }
             if (
-                MessageBox.Show("采集数据完成，工采集【" + plotList.Count + "】条数据\r\n是否进行生成PDF操作？", "采集数据完成",
-                    MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
-                DialogResult.OK)
+                MessageBox.Show(showInfo, "采集数据完成",MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==DialogResult.OK)
             {
                 var dirName = txtWorkPath.Text.Trim().Substring(txtWorkPath.Text.Trim().LastIndexOf(@"\") + 1);
+
+                #region 如果有错误文件 处理复制出来查看
+                if (errorDic.Count > 0)
+                {
+                    string currentPath = AppDomain.CurrentDomain.BaseDirectory;
+
+                    string generatePath = Path.Combine(currentPath, dirName, "原始错误文件");
+                    if (!Directory.Exists(generatePath))
+                        Directory.CreateDirectory(generatePath);
+                    foreach (var item in errorDic)
+                    {
+                        string errorFilePath = item.Value;
+                        string fileName = Path.GetFileName(errorFilePath);
+                        string generateFilePath = Path.Combine(generatePath, fileName);
+                        File.Copy(errorFilePath, generateFilePath, true);
+                    }
+                    if (Directory.Exists(generatePath))
+                        System.Diagnostics.Process.Start(generatePath);
+                }
+
+                #endregion
 
                 //Log("【自动采集生成界址点面积评估表操作】 采集并生成 【" + dirName + "】【" + plotList.Count + "】条数据");
                 System.Diagnostics.Process p = new System.Diagnostics.Process();
@@ -190,207 +218,214 @@ namespace GenerateTools
                 return;
             if (tables[0].Rows.Count == 0)
                 return;
-
-
-            model.CoordinateList = new List<CoordinatesModel>();
-            model.PlotName = tables[0].Rows[2].Cells[1].Paragraphs[0].Text.Trim();//地块名称
-            model.CbfDBName = tables[0].Rows[4].Cells[1].Paragraphs[0].Text.Trim();//承包方代表名称
-
-            #region 处理界址点检查记录信息
-            List<string> list = new List<string>();
-            //循环多页
-            for (int j = 0; j < tables.Count; j++)
+            try
             {
-                for (int i = 10; i < tables[j].Rows.Count; i++)
-                {
-                    var row = tables[j].Rows[i];
-                    if (string.IsNullOrEmpty(row.Cells[0].Paragraphs[0].Text))
-                        break;
-                    var coordinate = new CoordinatesModel();
-                    coordinate.OrderNum = (i - 9).ToString();
-                    coordinate.SerialNumber = row.Cells[0].Paragraphs[0].Text.Trim();
-                    coordinate.BoundaryPointNum = row.Cells[1].Paragraphs[0].Text.Trim();
 
-                    //对界址点编号中已存在的坐标点 不去重新计算赋值 直接添加入列表
-                    if (!list.Contains(coordinate.BoundaryPointNum) && plotDic.ContainsKey(coordinate.BoundaryPointNum) && !recursive)//非递归模式
+                model.CoordinateList = new List<CoordinatesModel>();
+                model.PlotName = tables[0].Rows[2].Cells[1].Paragraphs[0].Text.Trim();//地块名称
+                model.CbfDBName = tables[0].Rows[4].Cells[1].Paragraphs[0].Text.Trim();//承包方代表名称
+
+                #region 处理界址点检查记录信息
+                List<string> list = new List<string>();
+                //循环多页
+                for (int j = 0; j < tables.Count; j++)
+                {
+                    for (int i = 10; i < tables[j].Rows.Count; i++)
                     {
-                        list.Add(coordinate.BoundaryPointNum);
-                        coordinate = plotDic[coordinate.BoundaryPointNum];
+                        var row = tables[j].Rows[i];
+                        if (string.IsNullOrEmpty(row.Cells[0].Paragraphs[0].Text))
+                            break;
+                        var coordinate = new CoordinatesModel();
                         coordinate.OrderNum = (i - 9).ToString();
-                        model.CoordinateList.Add(coordinate);
-                        continue;
-                    }
+                        coordinate.SerialNumber = row.Cells[0].Paragraphs[0].Text.Trim();
+                        coordinate.BoundaryPointNum = row.Cells[1].Paragraphs[0].Text.Trim();
 
-                    coordinate.X = Convert.ToDouble(row.Cells[2].Paragraphs[0].Text.Trim()).ToString("f3");
-                    coordinate.Y = Convert.ToDouble(row.Cells[3].Paragraphs[0].Text.Trim()).ToString("f3");
-                    //先随机 ∆L
-                    coordinate.difL = GetdifL();
-                    coordinate.difSquareL = Math.Pow(Convert.ToDouble(coordinate.difL), 2.0).ToString("f3");
-                    //再随机 X'
-                    coordinate.cX = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-Convert.ToDouble(coordinate.difL) / 2, Convert.ToDouble(coordinate.difL) / 2, 3)).ToString("f3");
-
-                    #region 随机三次X取样值
-                    bool flagX = true;
-                    while (flagX)
-                    {
-                        coordinate.X1 = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
-                        coordinate.X2 = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
-                        coordinate.X3 = (3 * Convert.ToDouble(coordinate.X) - Convert.ToDouble(coordinate.X1) - Convert.ToDouble(coordinate.X2)).ToString("f3");
-                        if (Math.Abs(Convert.ToDouble(coordinate.X3) - Convert.ToDouble(coordinate.X)) < 0.8) //超出范围
+                        //对界址点编号中已存在的坐标点 不去重新计算赋值 直接添加入列表
+                        if (!list.Contains(coordinate.BoundaryPointNum) && plotDic.ContainsKey(coordinate.BoundaryPointNum) && !recursive)//非递归模式
                         {
-                            flagX = false;
+                            list.Add(coordinate.BoundaryPointNum);
+                            coordinate = plotDic[coordinate.BoundaryPointNum];
+                            coordinate.OrderNum = (i - 9).ToString();
+                            model.CoordinateList.Add(coordinate);
+                            continue;
+                        }
+
+                        coordinate.X = Convert.ToDouble(row.Cells[2].Paragraphs[0].Text.Trim()).ToString("f3");
+                        coordinate.Y = Convert.ToDouble(row.Cells[3].Paragraphs[0].Text.Trim()).ToString("f3");
+                        //先随机 ∆L
+                        coordinate.difL = GetdifL();
+                        coordinate.difSquareL = Math.Pow(Convert.ToDouble(coordinate.difL), 2.0).ToString("f3");
+                        //再随机 X'
+                        coordinate.cX = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-Convert.ToDouble(coordinate.difL) / 2, Convert.ToDouble(coordinate.difL) / 2, 3)).ToString("f3");
+
+                        #region 随机三次X取样值
+                        bool flagX = true;
+                        while (flagX)
+                        {
+                            coordinate.X1 = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
+                            coordinate.X2 = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
+                            coordinate.X3 = (3 * Convert.ToDouble(coordinate.X) - Convert.ToDouble(coordinate.X1) - Convert.ToDouble(coordinate.X2)).ToString("f3");
+                            if (Math.Abs(Convert.ToDouble(coordinate.X3) - Convert.ToDouble(coordinate.X)) < 0.8) //超出范围
+                            {
+                                flagX = false;
+                            }
+                        }
+                        #endregion
+
+                        coordinate.difX = (Convert.ToDouble(coordinate.X) - Convert.ToDouble(coordinate.cX)).ToString("f3");
+
+                        //根据公式求出 ∆y ∆y = 开平方（∆L2-∆x2）  每次随机正负值
+                        Random rd = new Random();
+                        var r = rd.Next(0, 2);
+                        coordinate.difY = ((r == 0 ? -1 : 1) * Math.Sqrt(Convert.ToDouble(coordinate.difSquareL) - Math.Pow(Convert.ToDouble(coordinate.difX), 2.0))).ToString("f3");
+
+                        coordinate.cY = (Convert.ToDouble(coordinate.Y) - Convert.ToDouble(coordinate.difY)).ToString("f3");
+                        #region 随机三次Y取样值
+                        bool flagY = true;
+                        while (flagY)
+                        {
+                            coordinate.Y1 = (Convert.ToDouble(coordinate.Y) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
+                            coordinate.Y2 = (Convert.ToDouble(coordinate.Y) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
+                            coordinate.Y3 = (3 * Convert.ToDouble(coordinate.Y) - Convert.ToDouble(coordinate.Y1) - Convert.ToDouble(coordinate.Y2)).ToString("f3");
+                            if (Math.Abs(Convert.ToDouble(coordinate.Y3) - Convert.ToDouble(coordinate.Y)) < 0.8) //超出范围
+                            {
+                                flagY = false;
+                            }
+                        }
+                        #endregion
+
+
+                        if (!plotDic.ContainsKey(coordinate.BoundaryPointNum))//界址点编号字典添加坐标实体
+                            plotDic.Add(coordinate.BoundaryPointNum, coordinate);
+
+                        if (!list.Contains(coordinate.BoundaryPointNum))//不把最后一个回归原点的坐标统计入内
+                        {
+                            list.Add(coordinate.BoundaryPointNum);
+                            model.CoordinateList.Add(coordinate);
                         }
                     }
-                    #endregion
-
-                    coordinate.difX = (Convert.ToDouble(coordinate.X) - Convert.ToDouble(coordinate.cX)).ToString("f3");
-
-                    //根据公式求出 ∆y ∆y = 开平方（∆L2-∆x2）  每次随机正负值
-                    Random rd = new Random();
-                    var r = rd.Next(0, 2);
-                    coordinate.difY = ((r == 0 ? -1 : 1) * Math.Sqrt(Convert.ToDouble(coordinate.difSquareL) - Math.Pow(Convert.ToDouble(coordinate.difX), 2.0))).ToString("f3");
-
-                    coordinate.cY = (Convert.ToDouble(coordinate.Y) - Convert.ToDouble(coordinate.difY)).ToString("f3");
-                    #region 随机三次Y取样值
-                    bool flagY = true;
-                    while (flagY)
-                    {
-                        coordinate.Y1 = (Convert.ToDouble(coordinate.Y) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
-                        coordinate.Y2 = (Convert.ToDouble(coordinate.Y) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
-                        coordinate.Y3 = (3 * Convert.ToDouble(coordinate.Y) - Convert.ToDouble(coordinate.Y1) - Convert.ToDouble(coordinate.Y2)).ToString("f3");
-                        if (Math.Abs(Convert.ToDouble(coordinate.Y3) - Convert.ToDouble(coordinate.Y)) < 0.8) //超出范围
-                        {
-                            flagY = false;
-                        }
-                    }
-                    #endregion
-
-
-                    if (!plotDic.ContainsKey(coordinate.BoundaryPointNum))//界址点编号字典添加坐标实体
-                        plotDic.Add(coordinate.BoundaryPointNum, coordinate);
-
-                    if (!list.Contains(coordinate.BoundaryPointNum))//不把最后一个回归原点的坐标统计入内
-                    {
-                        list.Add(coordinate.BoundaryPointNum);
-                        model.CoordinateList.Add(coordinate);
-                    }
                 }
-            }
 
 
-            #endregion
-
-            #region 处理面积检查记录信息
-            model.PlotArea = Convert.ToDouble(tables[0].Rows[6].Cells[1].Paragraphs[0].Text).ToString("f2");
-            #region 计算P'
-            //计算之前先判断是否有内环
-            bool isHaveNei = false;
-            int bigAreaCount = 0;
-            for (int i = 0; i < model.CoordinateList.Count; i++)
-            {
-                string serialNumber = model.CoordinateList[i].SerialNumber;
-                if (serialNumber.Contains("内环"))
-                {
-                    isHaveNei = true;
-                    bigAreaCount = i;
-                    break;
-                }
-            }
-
-            string realArea = "";
-            if (!isHaveNei) //如果没有内环
-            {
-                double[] difXArr = new double[model.CoordinateList.Count];
-                double[] difYArr = new double[model.CoordinateList.Count];
-                for (int i = 0; i < model.CoordinateList.Count; i++)
-                {
-                    difXArr[i] = Convert.ToDouble(model.CoordinateList[i].cX);
-                    difYArr[i] = Convert.ToDouble(model.CoordinateList[i].cY);
-                }
-                model.PlotCheckArea = MathCode.AoArea(model.CoordinateList.Count, difXArr, difYArr).ToString("f2");
-
-                for (int i = 0; i < model.CoordinateList.Count; i++)
-                {
-                    difXArr[i] = Convert.ToDouble(model.CoordinateList[i].X);
-                    difYArr[i] = Convert.ToDouble(model.CoordinateList[i].Y);
-                }
-                realArea = MathCode.AoArea(model.CoordinateList.Count, difXArr, difYArr).ToString("f2");
-            }
-            else//如果有内环
-            {
-                #region 大环
-                double[] difXArr = new double[bigAreaCount];
-                double[] difYArr = new double[bigAreaCount];
-                for (int i = 0; i < bigAreaCount; i++)
-                {
-                    difXArr[i] = Convert.ToDouble(model.CoordinateList[i].cX);
-                    difYArr[i] = Convert.ToDouble(model.CoordinateList[i].cY);
-                }
-                double bigArea = MathCode.AoArea(bigAreaCount, difXArr, difYArr);//大面积
-
-                for (int i = 0; i < bigAreaCount; i++)
-                {
-                    difXArr[i] = Convert.ToDouble(model.CoordinateList[i].X);
-                    difYArr[i] = Convert.ToDouble(model.CoordinateList[i].Y);
-                }
-                double realBigArea = MathCode.AoArea(bigAreaCount, difXArr, difYArr);//真实大面积 
                 #endregion
 
-                #region 小环
-                int smallAreaCount = model.CoordinateList.Count - bigAreaCount;
-                double[] difXArr2 = new double[smallAreaCount];
-                double[] difYArr2 = new double[smallAreaCount];
-                for (int i = 0; i < smallAreaCount; i++)
+                #region 处理面积检查记录信息
+                model.PlotArea = Convert.ToDouble(tables[0].Rows[6].Cells[1].Paragraphs[0].Text).ToString("f2");
+                #region 计算P'
+                //计算之前先判断是否有内环
+                bool isHaveNei = false;
+                int bigAreaCount = 0;
+                for (int i = 0; i < model.CoordinateList.Count; i++)
                 {
-                    difXArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].cX);
-                    difYArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].cY);
+                    string serialNumber = model.CoordinateList[i].SerialNumber;
+                    if (serialNumber.Contains("内环"))
+                    {
+                        isHaveNei = true;
+                        bigAreaCount = i;
+                        break;
+                    }
                 }
-                double smallArea = MathCode.AoArea(smallAreaCount, difXArr2, difYArr2);//内环面积
-                for (int i = 0; i < smallAreaCount; i++)
+
+                string realArea = "";
+                if (!isHaveNei) //如果没有内环
                 {
-                    difXArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].X);
-                    difYArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].Y);
+                    double[] difXArr = new double[model.CoordinateList.Count];
+                    double[] difYArr = new double[model.CoordinateList.Count];
+                    for (int i = 0; i < model.CoordinateList.Count; i++)
+                    {
+                        difXArr[i] = Convert.ToDouble(model.CoordinateList[i].cX);
+                        difYArr[i] = Convert.ToDouble(model.CoordinateList[i].cY);
+                    }
+                    model.PlotCheckArea = MathCode.AoArea(model.CoordinateList.Count, difXArr, difYArr).ToString("f2");
+
+                    for (int i = 0; i < model.CoordinateList.Count; i++)
+                    {
+                        difXArr[i] = Convert.ToDouble(model.CoordinateList[i].X);
+                        difYArr[i] = Convert.ToDouble(model.CoordinateList[i].Y);
+                    }
+                    realArea = MathCode.AoArea(model.CoordinateList.Count, difXArr, difYArr).ToString("f2");
                 }
-                double realSmallArea = MathCode.AoArea(smallAreaCount, difXArr2, difYArr2);//内环面积 
+                else//如果有内环
+                {
+                    #region 大环
+                    double[] difXArr = new double[bigAreaCount];
+                    double[] difYArr = new double[bigAreaCount];
+                    for (int i = 0; i < bigAreaCount; i++)
+                    {
+                        difXArr[i] = Convert.ToDouble(model.CoordinateList[i].cX);
+                        difYArr[i] = Convert.ToDouble(model.CoordinateList[i].cY);
+                    }
+                    double bigArea = MathCode.AoArea(bigAreaCount, difXArr, difYArr);//大面积
+
+                    for (int i = 0; i < bigAreaCount; i++)
+                    {
+                        difXArr[i] = Convert.ToDouble(model.CoordinateList[i].X);
+                        difYArr[i] = Convert.ToDouble(model.CoordinateList[i].Y);
+                    }
+                    double realBigArea = MathCode.AoArea(bigAreaCount, difXArr, difYArr);//真实大面积 
+                    #endregion
+
+                    #region 小环
+                    int smallAreaCount = model.CoordinateList.Count - bigAreaCount;
+                    double[] difXArr2 = new double[smallAreaCount];
+                    double[] difYArr2 = new double[smallAreaCount];
+                    for (int i = 0; i < smallAreaCount; i++)
+                    {
+                        difXArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].cX);
+                        difYArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].cY);
+                    }
+                    double smallArea = Math.Abs(MathCode.AoArea(smallAreaCount, difXArr2, difYArr2));//内环面积
+                    for (int i = 0; i < smallAreaCount; i++)
+                    {
+                        difXArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].X);
+                        difYArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].Y);
+                    }
+                    double realSmallArea = Math.Abs(MathCode.AoArea(smallAreaCount, difXArr2, difYArr2));//内环面积 
+                    #endregion
+
+                    model.PlotCheckArea = (bigArea - smallArea).ToString("f2");
+                    realArea = (realBigArea - realSmallArea).ToString("f2");
+                }
+
+                #endregion
+                model.DifArea = Math.Abs(Convert.ToDouble(model.PlotArea) - Convert.ToDouble(model.PlotCheckArea)).ToString("f2");
+                //R=∆P÷P′×100％
+                model.PercentageError = (Convert.ToDouble(model.DifArea) / Convert.ToDouble(model.PlotCheckArea) * 100).ToString("f1");
                 #endregion
 
-                model.PlotCheckArea = (bigArea - smallArea).ToString("f2");
-                realArea = (realBigArea - realSmallArea).ToString("f2");
-            }
+                #region 计算界址点中误差
+                //界址点中误差m= sqrt(∑[∆L2]/2n)；高精度检查时，界址点中误差m= sqrt(∑[∆L2]/ n)
+                double difLSum = 0;
+                foreach (var coordinate in model.CoordinateList)
+                {
+                    difLSum += Convert.ToDouble(coordinate.difSquareL);
+                }
+                model.PlotM = Math.Sqrt(difLSum / (2 * model.CoordinateList.Count)).ToString("f4");
 
-            #endregion
-            model.DifArea = Math.Abs(Convert.ToDouble(model.PlotArea) - Convert.ToDouble(model.PlotCheckArea)).ToString("f2");
-            //R=∆P÷P′×100％
-            model.PercentageError = (Convert.ToDouble(model.DifArea) / Convert.ToDouble(model.PlotCheckArea) * 100).ToString("f1");
-            #endregion
+                #endregion
 
-            #region 计算界址点中误差
-            //界址点中误差m= sqrt(∑[∆L2]/2n)；高精度检查时，界址点中误差m= sqrt(∑[∆L2]/ n)
-            double difLSum = 0;
-            foreach (var coordinate in model.CoordinateList)
-            {
-                difLSum += Convert.ToDouble(coordinate.difSquareL);
-            }
-            model.PlotM = Math.Sqrt(difLSum / (2 * model.CoordinateList.Count)).ToString("f4");
-
-            #endregion
-
-            calcCount++;
-            if (calcCount > 20)//如果计算次数超过40，说明有异常发生
-            {
-                errorList.Add(filePath + " 文件中面积值为：" + model.PlotArea + ",实际运算值为：" + realArea);
+                calcCount++;
+                if (calcCount > 20)//如果计算次数超过40，说明有异常发生
+                {
+                    //errorDic.Add(model.PlotCode, filePath + " 文件中面积值为：" + model.PlotArea + ",实际运算值为：" + realArea);
+                    calcCount = 0;
+                    model.IsGenerate = false;
+                    return;
+                }
+                //最后判断如果 误差>5则重新计算
+                if (Convert.ToDouble(model.PercentageError) >= 5)
+                    SetPlotModel_DOC(model, filePath, true);
+                //如果计算界址点中误差>=0.4则重新计算
+                if (Convert.ToDouble(model.PlotM) >= 0.4)
+                    SetPlotModel_DOC(model, filePath, true);
+                //standM = GetStandM();
                 calcCount = 0;
-                //MessageBox.Show("【" + filePath + "】文件数据有误，请检查！");
                 return;
             }
-            //最后判断如果 误差>5则重新计算
-            if (Convert.ToDouble(model.PercentageError) >= 5)
-                SetPlotModel_DOC(model, filePath, true);
-            //如果计算界址点中误差>=0.4则重新计算
-            if (Convert.ToDouble(model.PlotM) >= 0.4)
-                SetPlotModel_DOC(model, filePath, true);
-            //standM = GetStandM();
-            calcCount = 0;
+            catch (Exception ex)
+            {
+                errorDic.Add(model.PlotCode, filePath);
+            }
         }
 
         /// <summary>
@@ -432,208 +467,216 @@ namespace GenerateTools
                 fs.Close();
                 fs.Dispose();
             }
-
-            model.CoordinateList = new List<CoordinatesModel>();
-            model.PlotName = sheetList[0].GetRow(3).Cells[2].StringCellValue;//地块名称
-            model.CbfDBName = sheetList[0].GetRow(5).Cells[2].StringCellValue;//承包方代表名称
-
-            #region 处理界址点检查记录信息
-            List<string> list = new List<string>();
-            for (int j= 0; j < sheetList.Count; j++)
+            try
             {
-                for (int i = 10; i <= sheetList[j].LastRowNum - 1; i++)
-                {
-                    IRow row = sheetList[j].GetRow(i);
 
-                    //当界址点号不是数字时终止循环
-                    if (string.IsNullOrEmpty(Regex.Replace(row.Cells[2].StringCellValue.Trim(), @"[^\d|.]+", "")))
-                        break;
-                    var coordinate = new CoordinatesModel();
-                    coordinate.OrderNum = (i - 9).ToString();
-                    coordinate.SerialNumber = row.Cells[0].StringCellValue.Trim();
-                    coordinate.BoundaryPointNum = row.Cells[2].StringCellValue.Trim();
-                    //对界址点编号中已存在的坐标点 不去重新计算赋值 直接添加入列表
-                    if (!list.Contains(coordinate.BoundaryPointNum) && plotDic.ContainsKey(coordinate.BoundaryPointNum) && !recursive)//非递归模式
+                model.CoordinateList = new List<CoordinatesModel>();
+                model.PlotName = sheetList[0].GetRow(3).Cells[2].StringCellValue;//地块名称
+                model.CbfDBName = sheetList[0].GetRow(5).Cells[2].StringCellValue;//承包方代表名称
+
+                #region 处理界址点检查记录信息
+                List<string> list = new List<string>();
+                for (int j = 0; j < sheetList.Count; j++)
+                {
+                    for (int i = 10; i <= sheetList[j].LastRowNum - 1; i++)
                     {
-                        list.Add(coordinate.BoundaryPointNum);
-                        coordinate = plotDic[coordinate.BoundaryPointNum];
+                        IRow row = sheetList[j].GetRow(i);
+
+                        //当界址点号不是数字时终止循环
+                        if (string.IsNullOrEmpty(Regex.Replace(row.Cells[2].StringCellValue.Trim(), @"[^\d|.]+", "")))
+                            break;
+                        var coordinate = new CoordinatesModel();
                         coordinate.OrderNum = (i - 9).ToString();
-                        model.CoordinateList.Add(coordinate);
-                        continue;
-                    }
-
-                    coordinate.X = Convert.ToDouble(row.Cells[3].StringCellValue.Trim()).ToString("f3");
-                    coordinate.Y = Convert.ToDouble(row.Cells[4].StringCellValue.Trim()).ToString("f3");
-                    //先随机 ∆L
-                    coordinate.difL = GetdifL();
-                    coordinate.difSquareL = Math.Pow(Convert.ToDouble(coordinate.difL), 2.0).ToString("f3");
-                    //再随机 X'
-                    coordinate.cX = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-Convert.ToDouble(coordinate.difL) / 2, Convert.ToDouble(coordinate.difL) / 2, 3)).ToString("f3");
-
-                    #region 随机三次X取样值
-                    bool flagX = true;
-                    while (flagX)
-                    {
-                        coordinate.X1 = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
-                        coordinate.X2 = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
-                        coordinate.X3 = (3 * Convert.ToDouble(coordinate.X) - Convert.ToDouble(coordinate.X1) - Convert.ToDouble(coordinate.X2)).ToString("f3");
-                        if (Math.Abs(Convert.ToDouble(coordinate.X3) - Convert.ToDouble(coordinate.X)) < 0.8) //超出范围
+                        coordinate.SerialNumber = row.Cells[0].StringCellValue.Trim();
+                        coordinate.BoundaryPointNum = row.Cells[2].StringCellValue.Trim();
+                        //对界址点编号中已存在的坐标点 不去重新计算赋值 直接添加入列表
+                        if (!list.Contains(coordinate.BoundaryPointNum) && plotDic.ContainsKey(coordinate.BoundaryPointNum) && !recursive)//非递归模式
                         {
-                            flagX = false;
+                            list.Add(coordinate.BoundaryPointNum);
+                            coordinate = plotDic[coordinate.BoundaryPointNum];
+                            coordinate.OrderNum = (i - 9).ToString();
+                            model.CoordinateList.Add(coordinate);
+                            continue;
+                        }
+
+                        coordinate.X = Convert.ToDouble(row.Cells[3].StringCellValue.Trim()).ToString("f3");
+                        coordinate.Y = Convert.ToDouble(row.Cells[4].StringCellValue.Trim()).ToString("f3");
+                        //先随机 ∆L
+                        coordinate.difL = GetdifL();
+                        coordinate.difSquareL = Math.Pow(Convert.ToDouble(coordinate.difL), 2.0).ToString("f3");
+                        //再随机 X'
+                        coordinate.cX = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-Convert.ToDouble(coordinate.difL) / 2, Convert.ToDouble(coordinate.difL) / 2, 3)).ToString("f3");
+
+                        #region 随机三次X取样值
+                        bool flagX = true;
+                        while (flagX)
+                        {
+                            coordinate.X1 = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
+                            coordinate.X2 = (Convert.ToDouble(coordinate.X) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
+                            coordinate.X3 = (3 * Convert.ToDouble(coordinate.X) - Convert.ToDouble(coordinate.X1) - Convert.ToDouble(coordinate.X2)).ToString("f3");
+                            if (Math.Abs(Convert.ToDouble(coordinate.X3) - Convert.ToDouble(coordinate.X)) < 0.8) //超出范围
+                            {
+                                flagX = false;
+                            }
+                        }
+                        #endregion
+
+                        coordinate.difX = (Convert.ToDouble(coordinate.X) - Convert.ToDouble(coordinate.cX)).ToString("f3");
+
+                        //根据公式求出 ∆y ∆y = 开平方（∆L2-∆x2）  每次随机正负值
+                        Random rd = new Random();
+                        var r = rd.Next(0, 2);
+                        coordinate.difY = ((r == 0 ? -1 : 1) * Math.Sqrt(Convert.ToDouble(coordinate.difSquareL) - Math.Pow(Convert.ToDouble(coordinate.difX), 2.0))).ToString("f3");
+
+                        coordinate.cY = (Convert.ToDouble(coordinate.Y) - Convert.ToDouble(coordinate.difY)).ToString("f3");
+                        #region 随机三次Y取样值
+                        bool flagY = true;
+                        while (flagY)
+                        {
+                            coordinate.Y1 = (Convert.ToDouble(coordinate.Y) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
+                            coordinate.Y2 = (Convert.ToDouble(coordinate.Y) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
+                            coordinate.Y3 = (3 * Convert.ToDouble(coordinate.Y) - Convert.ToDouble(coordinate.Y1) - Convert.ToDouble(coordinate.Y2)).ToString("f3");
+                            if (Math.Abs(Convert.ToDouble(coordinate.Y3) - Convert.ToDouble(coordinate.Y)) < 0.8) //超出范围
+                            {
+                                flagY = false;
+                            }
+                        }
+                        #endregion
+
+
+                        if (!plotDic.ContainsKey(coordinate.BoundaryPointNum))//界址点编号字典添加坐标实体
+                            plotDic.Add(coordinate.BoundaryPointNum, coordinate);
+
+                        if (!list.Contains(coordinate.BoundaryPointNum))//不把最后一个回归原点的坐标统计入内
+                        {
+                            list.Add(coordinate.BoundaryPointNum);
+                            model.CoordinateList.Add(coordinate);
                         }
                     }
-                    #endregion
-
-                    coordinate.difX = (Convert.ToDouble(coordinate.X) - Convert.ToDouble(coordinate.cX)).ToString("f3");
-
-                    //根据公式求出 ∆y ∆y = 开平方（∆L2-∆x2）  每次随机正负值
-                    Random rd = new Random();
-                    var r = rd.Next(0, 2);
-                    coordinate.difY = ((r == 0 ? -1 : 1) * Math.Sqrt(Convert.ToDouble(coordinate.difSquareL) - Math.Pow(Convert.ToDouble(coordinate.difX), 2.0))).ToString("f3");
-
-                    coordinate.cY = (Convert.ToDouble(coordinate.Y) - Convert.ToDouble(coordinate.difY)).ToString("f3");
-                    #region 随机三次Y取样值
-                    bool flagY = true;
-                    while (flagY)
-                    {
-                        coordinate.Y1 = (Convert.ToDouble(coordinate.Y) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
-                        coordinate.Y2 = (Convert.ToDouble(coordinate.Y) + MathCode.GetRandomNumber(-0.75, 0.75, 3)).ToString("f3");
-                        coordinate.Y3 = (3 * Convert.ToDouble(coordinate.Y) - Convert.ToDouble(coordinate.Y1) - Convert.ToDouble(coordinate.Y2)).ToString("f3");
-                        if (Math.Abs(Convert.ToDouble(coordinate.Y3) - Convert.ToDouble(coordinate.Y)) < 0.8) //超出范围
-                        {
-                            flagY = false;
-                        }
-                    }
-                    #endregion
-
-
-                    if (!plotDic.ContainsKey(coordinate.BoundaryPointNum))//界址点编号字典添加坐标实体
-                        plotDic.Add(coordinate.BoundaryPointNum, coordinate);
-
-                    if (!list.Contains(coordinate.BoundaryPointNum))//不把最后一个回归原点的坐标统计入内
-                    {
-                        list.Add(coordinate.BoundaryPointNum);
-                        model.CoordinateList.Add(coordinate);
-                    }
                 }
-            }
-            
-            #endregion
 
-            #region 处理面积检查记录信息
-            model.PlotArea = Convert.ToDouble(Regex.Replace(sheetList[0].GetRow(6).Cells[2].StringCellValue.Trim(), @"[^\d|.]+", "")).ToString("f2");
-            #region 计算P'
-            //计算之前先判断是否有内环
-            bool isHaveNei = false;
-            int bigAreaCount = 0;
-            for (int i = 0; i < model.CoordinateList.Count; i++)
-            {
-                string serialNumber = model.CoordinateList[i].SerialNumber;
-                if (serialNumber.Contains("内环"))
-                {
-                    isHaveNei = true;
-                    bigAreaCount = i;
-                    break;
-                }
-            }
-
-            string realArea = "";
-            if (!isHaveNei) //如果没有内环
-            {
-                double[] difXArr = new double[model.CoordinateList.Count];
-                double[] difYArr = new double[model.CoordinateList.Count];
-                for (int i = 0; i < model.CoordinateList.Count; i++)
-                {
-                    difXArr[i] = Convert.ToDouble(model.CoordinateList[i].cX);
-                    difYArr[i] = Convert.ToDouble(model.CoordinateList[i].cY);
-                }
-                model.PlotCheckArea = MathCode.AoArea(model.CoordinateList.Count, difXArr, difYArr).ToString("f2");
-
-                for (int i = 0; i < model.CoordinateList.Count; i++)
-                {
-                    difXArr[i] = Convert.ToDouble(model.CoordinateList[i].X);
-                    difYArr[i] = Convert.ToDouble(model.CoordinateList[i].Y);
-                }
-                realArea = MathCode.AoArea(model.CoordinateList.Count, difXArr, difYArr).ToString("f2");
-            }
-            else//如果有内环
-            {
-                #region 大环
-                double[] difXArr = new double[bigAreaCount];
-                double[] difYArr = new double[bigAreaCount];
-                for (int i = 0; i < bigAreaCount; i++)
-                {
-                    difXArr[i] = Convert.ToDouble(model.CoordinateList[i].cX);
-                    difYArr[i] = Convert.ToDouble(model.CoordinateList[i].cY);
-                }
-                double bigArea = MathCode.AoArea(bigAreaCount, difXArr, difYArr);//大面积
-
-                for (int i = 0; i < bigAreaCount; i++)
-                {
-                    difXArr[i] = Convert.ToDouble(model.CoordinateList[i].X);
-                    difYArr[i] = Convert.ToDouble(model.CoordinateList[i].Y);
-                }
-                double realBigArea = MathCode.AoArea(bigAreaCount, difXArr, difYArr);//真实大面积 
                 #endregion
 
-                #region 小环
-                int smallAreaCount = model.CoordinateList.Count - bigAreaCount;
-                double[] difXArr2 = new double[smallAreaCount];
-                double[] difYArr2 = new double[smallAreaCount];
-                for (int i = 0; i < smallAreaCount; i++)
+                #region 处理面积检查记录信息
+                model.PlotArea = Convert.ToDouble(Regex.Replace(sheetList[0].GetRow(6).Cells[2].StringCellValue.Trim(), @"[^\d|.]+", "")).ToString("f2");
+                #region 计算P'
+                //计算之前先判断是否有内环
+                bool isHaveNei = false;
+                int bigAreaCount = 0;
+                for (int i = 0; i < model.CoordinateList.Count; i++)
                 {
-                    difXArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].cX);
-                    difYArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].cY);
+                    string serialNumber = model.CoordinateList[i].SerialNumber;
+                    if (serialNumber.Contains("内环"))
+                    {
+                        isHaveNei = true;
+                        bigAreaCount = i;
+                        break;
+                    }
                 }
-                double smallArea = MathCode.AoArea(smallAreaCount, difXArr2, difYArr2);//内环面积
-                for (int i = 0; i < smallAreaCount; i++)
+
+                string realArea = "";
+                if (!isHaveNei) //如果没有内环
                 {
-                    difXArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].X);
-                    difYArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].Y);
+                    double[] difXArr = new double[model.CoordinateList.Count];
+                    double[] difYArr = new double[model.CoordinateList.Count];
+                    for (int i = 0; i < model.CoordinateList.Count; i++)
+                    {
+                        difXArr[i] = Convert.ToDouble(model.CoordinateList[i].cX);
+                        difYArr[i] = Convert.ToDouble(model.CoordinateList[i].cY);
+                    }
+                    model.PlotCheckArea = MathCode.AoArea(model.CoordinateList.Count, difXArr, difYArr).ToString("f2");
+
+                    for (int i = 0; i < model.CoordinateList.Count; i++)
+                    {
+                        difXArr[i] = Convert.ToDouble(model.CoordinateList[i].X);
+                        difYArr[i] = Convert.ToDouble(model.CoordinateList[i].Y);
+                    }
+                    realArea = MathCode.AoArea(model.CoordinateList.Count, difXArr, difYArr).ToString("f2");
                 }
-                double realSmallArea = MathCode.AoArea(smallAreaCount, difXArr2, difYArr2);//内环面积 
+                else//如果有内环
+                {
+                    #region 大环
+                    double[] difXArr = new double[bigAreaCount];
+                    double[] difYArr = new double[bigAreaCount];
+                    for (int i = 0; i < bigAreaCount; i++)
+                    {
+                        difXArr[i] = Convert.ToDouble(model.CoordinateList[i].cX);
+                        difYArr[i] = Convert.ToDouble(model.CoordinateList[i].cY);
+                    }
+                    double bigArea = MathCode.AoArea(bigAreaCount, difXArr, difYArr);//大面积
+
+                    for (int i = 0; i < bigAreaCount; i++)
+                    {
+                        difXArr[i] = Convert.ToDouble(model.CoordinateList[i].X);
+                        difYArr[i] = Convert.ToDouble(model.CoordinateList[i].Y);
+                    }
+                    double realBigArea = MathCode.AoArea(bigAreaCount, difXArr, difYArr);//真实大面积 
+                    #endregion
+
+                    #region 小环
+                    int smallAreaCount = model.CoordinateList.Count - bigAreaCount;
+                    double[] difXArr2 = new double[smallAreaCount];
+                    double[] difYArr2 = new double[smallAreaCount];
+                    for (int i = 0; i < smallAreaCount; i++)
+                    {
+                        difXArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].cX);
+                        difYArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].cY);
+                    }
+                    double smallArea = Math.Abs(MathCode.AoArea(smallAreaCount, difXArr2, difYArr2));//内环面积
+                    for (int i = 0; i < smallAreaCount; i++)
+                    {
+                        difXArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].X);
+                        difYArr2[i] = Convert.ToDouble(model.CoordinateList[i + bigAreaCount].Y);
+                    }
+                    double realSmallArea = Math.Abs(MathCode.AoArea(smallAreaCount, difXArr2, difYArr2));//内环面积 
+                    #endregion
+
+                    model.PlotCheckArea = (bigArea - smallArea).ToString("f2");
+                    realArea = (realBigArea - realSmallArea).ToString("f2");
+                }
+
+
+
+                #endregion
+                model.DifArea = Math.Abs(Convert.ToDouble(model.PlotArea) - Convert.ToDouble(model.PlotCheckArea)).ToString("f2");
+                //R=∆P÷P′×100％
+                model.PercentageError = (Convert.ToDouble(model.DifArea) / Convert.ToDouble(model.PlotCheckArea) * 100).ToString("f1");
+
                 #endregion
 
-                model.PlotCheckArea = (bigArea - smallArea).ToString("f2");
-                realArea = (realBigArea - realSmallArea).ToString("f2");
-            }
+                #region 计算界址点中误差
+                //界址点中误差m= sqrt(∑[∆L2]/2n)；高精度检查时，界址点中误差m= sqrt(∑[∆L2]/ n)
+                double difLSum = 0;
+                foreach (var coordinate in model.CoordinateList)
+                {
+                    difLSum += Convert.ToDouble(coordinate.difSquareL);
+                }
+                model.PlotM = Math.Sqrt(difLSum / (2 * model.CoordinateList.Count)).ToString("f4");
 
-           
+                #endregion
 
-            #endregion
-            model.DifArea = Math.Abs(Convert.ToDouble(model.PlotArea) - Convert.ToDouble(model.PlotCheckArea)).ToString("f2");
-            //R=∆P÷P′×100％
-            model.PercentageError = (Convert.ToDouble(model.DifArea) / Convert.ToDouble(model.PlotCheckArea) * 100).ToString("f1");
-
-            #endregion
-
-            #region 计算界址点中误差
-            //界址点中误差m= sqrt(∑[∆L2]/2n)；高精度检查时，界址点中误差m= sqrt(∑[∆L2]/ n)
-            double difLSum = 0;
-            foreach (var coordinate in model.CoordinateList)
-            {
-                difLSum += Convert.ToDouble(coordinate.difSquareL);
-            }
-            model.PlotM = Math.Sqrt(difLSum / (2 * model.CoordinateList.Count)).ToString("f4");
-
-            #endregion
-
-            calcCount++;
-            if (calcCount > 20)//如果计算次数超过40，说明有异常发生
-            {
-                errorList.Add(filePath + " 文件中面积值为：" + model.PlotArea + ",实际运算值为：" + realArea);
+                calcCount++;
+                if (calcCount > 20)//如果计算次数超过40，说明有异常发生
+                {
+                    //errorDic.Add(model.PlotCode, filePath + " 文件中面积值为：" + model.PlotArea + ",实际运算值为：" + realArea);
+                    calcCount = 0;
+                    model.IsGenerate = false;
+                    return;
+                }
+                //最后判断如果 误差>5则重新计算
+                if (Convert.ToDouble(model.PercentageError) >= 5)
+                    SetPlotModel_EXCEL(model, filePath, true);
+                //如果计算界址点中误差>=0.4则重新计算
+                if (Convert.ToDouble(model.PlotM) >= 0.4)
+                    SetPlotModel_EXCEL(model, filePath, true);
+                //standM = GetStandM();
                 calcCount = 0;
-                //MessageBox.Show("【" + filePath + "】文件数据有误，请检查！");
                 return;
             }
-            //最后判断如果 误差>5则重新计算
-            if (Convert.ToDouble(model.PercentageError) >= 5)
-                SetPlotModel_EXCEL(model, filePath, true);
-            //如果计算界址点中误差>=0.4则重新计算
-            if (Convert.ToDouble(model.PlotM) >= 0.4)
-                SetPlotModel_EXCEL(model, filePath, true);
-            //standM = GetStandM();
-            calcCount = 0;
+            catch (Exception ex)
+            {
+                errorDic.Add(model.PlotCode, filePath);
+            }
         }
 
         private double GetStandM()

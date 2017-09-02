@@ -69,7 +69,7 @@ namespace Excel2Pdf
 
             if (MessageBox.Show(@"是否需要打开生成目录", "操作成功", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
-                string makePath = GetGeneratePath();
+                string makePath = GetGeneratePath("");
                 if (Directory.Exists(makePath))
                     System.Diagnostics.Process.Start(makePath);
                 this.Close();
@@ -188,18 +188,18 @@ namespace Excel2Pdf
                 worksheet.Range["J" + currentRowIndex].Text = coordinate.difSquareL;
             }
 
-            string generatePath = GetGeneratePath();
+            string generatePath = GetGeneratePath("");
             if (!Directory.Exists(generatePath))
                 Directory.CreateDirectory(generatePath);
             var dict = GetConfigDict("JZD");
             var zjdCode = dict.Keys.First();
             string groupNum = model.PlotCode.Substring(12, 2);
-            generatePath = Path.Combine(generatePath, groupNum,zjdCode + model.PlotCode);//每个生成的文件放到对应组号下面
+            generatePath = Path.Combine(generatePath, groupNum, "承包方", zjdCode + model.PlotCode);//每个生成的文件放到对应组号下面
 
             workbook.SaveToFile(generatePath + ".xlsx", ExcelVersion.Version2010);
-
             PdfUtility.ConvertExcel2PDF(generatePath + ".xlsx", generatePath + ".pdf");
             File.Delete(generatePath + ".xlsx");//删除excel文件 
+
             #endregion
 
             #region 面积检查表
@@ -227,16 +227,26 @@ namespace Excel2Pdf
             worksheet2.Range["D5"].Text = model.DifArea;
             worksheet2.Range["E5"].Text = model.PercentageError + "%";
 
-            string generatePath2 = GetGeneratePath();
+            string generatePath2 = GetGeneratePath("");
 
             var dict2 = GetConfigDict("AREA");
             var areaCode = dict2.Keys.First();
             groupNum = model.PlotCode.Substring(12, 2);
-            generatePath2 = Path.Combine(generatePath2, groupNum, areaCode + model.PlotCode);
+            generatePath2 = Path.Combine(generatePath2, groupNum, "承包方", areaCode + model.PlotCode);
 
-            workbook2.SaveToFile(generatePath2 + ".xlsx", ExcelVersion.Version2010);
-            PdfUtility.ConvertExcel2PDF(generatePath2 + ".xlsx", generatePath2 + ".pdf");
-            File.Delete(generatePath2 + ".xlsx");//删除excel文件 
+            if (model.IsGenerate)
+            {
+                workbook2.SaveToFile(generatePath2 + ".xlsx", ExcelVersion.Version2010);
+                PdfUtility.ConvertExcel2PDF(generatePath2 + ".xlsx", generatePath2 + ".pdf");
+                File.Delete(generatePath2 + ".xlsx");//删除excel文件 }
+            }
+            else//当有错误面积表文件时，单独生成到错误文件夹里
+            {
+                string errorPath = GetGeneratePath("");
+                errorPath = Path.Combine(errorPath, "面积精度检查表错误文件", areaCode + model.PlotCode);
+                workbook2.SaveToFile(errorPath + ".xlsx", ExcelVersion.Version2010);
+            }
+
             #endregion
         }
 
@@ -264,7 +274,7 @@ namespace Excel2Pdf
 
                     if (currentRowIndex > 20)//如果超出20条数据，则增加数据行
                     {
-                        worksheet.InsertRow(19+totalCount, 1);
+                        worksheet.InsertRow(19 + totalCount, 1);
                         worksheet.SetRowHeight(currentRowIndex, 22);
                         worksheet.Copy(worksheet.Range["A19:P19"], worksheet.Range["A" + currentRowIndex + ":P" + currentRowIndex], true);
                     }

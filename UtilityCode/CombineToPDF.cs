@@ -51,10 +51,13 @@ namespace UtilityCode
                     string fdfPath = file.FullName.Replace(file.Extension, ".pdf");
                     if (addFlag)//如果既有pdf又有jpg,则为改名递增
                     {
-                        int index = 0;
+                        long index = 0;
                         if (!string.IsNullOrEmpty(fileName))//能取到数字文件名
-                            Convert.ToInt32(fileName);
-                        index += 10000;
+                        {
+                            fileName = fileName.Length >= 16 ? fileName.Substring(fileName.Length - 16, 16) : fileName;
+                            index = Convert.ToInt64(fileName);
+                        }
+                        index += 10000000000;
                         fdfPath = file.FullName.Replace(file.Name, index + ".pdf");
                     }
                     PdfUtility.ConvertJPG2PDF(photoPath, fdfPath);
@@ -70,7 +73,7 @@ namespace UtilityCode
         public static string[] getFileArr(DirectoryInfo dir)
         {
             FileInfo[] files = dir.GetFiles();
-            Dictionary<int, string> dict = new Dictionary<int, string>();
+            Dictionary<long, string> dict = new Dictionary<long, string>();
             ArrayList list = new ArrayList();
 
             foreach (FileInfo file in files)
@@ -85,7 +88,8 @@ namespace UtilityCode
                         if (dict.Count > 0)
                             fileName = (dict.Last().Key + 1).ToString();
                     }
-                    int index = Convert.ToInt32(fileName);
+                    fileName = fileName.Length >= 16 ? fileName.Substring(fileName.Length - 16, 16) : fileName;
+                    long index = Convert.ToInt64(fileName);
                     string fileFullName = file.FullName;
                     bool flag = true;
                     while (flag)
@@ -104,7 +108,7 @@ namespace UtilityCode
             }
             Sort(list);//大小排序
             ArrayList fileList = new ArrayList();
-            foreach (int item in list)
+            foreach (long item in list)
             {
                 fileList.Add(dict[item]);
             }
@@ -116,9 +120,9 @@ namespace UtilityCode
         {
             for (int i = 1; i < list.Count; ++i)
             {
-                int t = Convert.ToInt32(list[i]);
+                long t = Convert.ToInt64(list[i]);
                 int j = i;
-                while ((j > 0) && (Convert.ToInt32(list[j - 1]) > t))
+                while ((j > 0) && (Convert.ToInt64(list[j - 1]) > t))
                 {
                     list[j] = list[j - 1];
                     --j;

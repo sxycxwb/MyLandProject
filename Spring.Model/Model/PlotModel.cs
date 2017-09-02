@@ -62,5 +62,10 @@ namespace Spring.Model
         /// </summary>
         public string PlotM { get; set; }
 
+        /// <summary>
+        /// 是否生成PDF
+        /// </summary>
+        public bool IsGenerate { get; set; }
+
     }
 }
