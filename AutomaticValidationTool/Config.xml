@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Config>
+  <!--权属数据文件夹名称-->
+  <ACCESS_DB>
+    <value>权属数据</value>
+  </ACCESS_DB>
+
+  <!--检查信息文件夹名称-->
+  <SQLLITE_DB>
+    <value>检查信息</value>
+  </SQLLITE_DB>
+
+</Config>

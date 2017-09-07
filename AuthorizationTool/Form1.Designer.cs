@@ -43,9 +43,9 @@
             this.label4.ForeColor = System.Drawing.Color.Red;
             this.label4.Location = new System.Drawing.Point(29, 45);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(191, 12);
+            this.label4.Size = new System.Drawing.Size(185, 12);
             this.label4.TabIndex = 15;
-            this.label4.Text = "提示：选择 合并PDF工具 的文件夹";
+            this.label4.Text = "提示：选择 待授权工具 的文件夹";
             // 
             // btnSetPath
             // 
@@ -109,7 +109,7 @@
             this.Controls.Add(this.btnSetPath);
             this.Controls.Add(this.txtCombinePath);
             this.Name = "Form1";
-            this.Text = "合并PDF授权";
+            this.Text = "授权工具";
             this.ResumeLayout(false);
             this.PerformLayout();
 

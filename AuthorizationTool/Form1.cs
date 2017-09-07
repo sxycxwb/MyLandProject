@@ -24,7 +24,7 @@ namespace AuthorizationTool
         private void btnSetPath_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog();
-            dialog.Description = "请设置待授权合并PDF软件的目录";
+            dialog.Description = "请设置待授权工具的路径";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 string foldPath = dialog.SelectedPath;
