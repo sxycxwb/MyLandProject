@@ -5,6 +5,11 @@
     <value>权属数据</value>
   </ACCESS_DB>
 
+  <!--矢量数据文件夹名称-->
+  <DBF_DB>
+    <value>矢量数据</value>
+  </DBF_DB>
+  
   <!--检查信息文件夹名称-->
   <SQLLITE_DB>
     <value>检查信息</value>

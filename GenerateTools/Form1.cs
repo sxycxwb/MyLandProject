@@ -27,6 +27,7 @@ namespace GenerateTools
         private double standM = 0.4;
         private int calcCount = 0;//赋值计算次数
         private Dictionary<string, string> errorDic = new Dictionary<string, string>();//错误文件列表
+        private string type = "";
 
         /// <summary>
         /// UI线程的同步上下文
@@ -178,8 +179,8 @@ namespace GenerateTools
                 p.StartInfo.FileName = "Excel2Pdf"; //需要启动的程序名   
                                                     //获得文件夹名称
 
-                //传递的参数 参数1：文件夹名称 参数2：检查人姓名 参数3：检查日期 
-                p.StartInfo.Arguments = dirName.Trim().Replace(" ", "") + " " + txtCheckName.Text.Trim() + " " + Convert.ToDateTime(txtCheckDate.Text).ToString("yyyy年MM月dd日");
+                //传递的参数 参数1：文件夹名称 参数2：检查人姓名 参数3：检查日期 参数4：生成类型
+                p.StartInfo.Arguments = dirName.Trim().Replace(" ", "") + " " + txtCheckName.Text.Trim() + " " + Convert.ToDateTime(txtCheckDate.Text).ToString("yyyy年MM月dd日")+" "+type;
                 p.Start(); //启动  
             }
             else
@@ -471,8 +472,8 @@ namespace GenerateTools
             {
 
                 model.CoordinateList = new List<CoordinatesModel>();
-                model.PlotName = sheetList[0].GetRow(3).Cells[2].StringCellValue;//地块名称
-                model.CbfDBName = sheetList[0].GetRow(5).Cells[2].StringCellValue;//承包方代表名称
+                model.PlotName = sheetList[0].GetRow(2).Cells[2].StringCellValue;//地块名称
+                model.CbfDBName = sheetList[0].GetRow(4).Cells[2].StringCellValue;//承包方代表名称
 
                 #region 处理界址点检查记录信息
                 List<string> list = new List<string>();
@@ -752,6 +753,31 @@ namespace GenerateTools
         private void btnCopyErrorMsg_Click(object sender, EventArgs e)
         {
             Clipboard.SetDataObject(txtErrorMsg.SelectedText);
+        }
+
+        /// <summary>
+        /// 自检报告生成
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnCheckGen_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtCheckName.Text.Trim()))
+            {
+                MessageBox.Show("检查人员姓名不能为空！");
+                return;
+            }
+
+            DirectoryInfo dir = new DirectoryInfo(txtWorkPath.Text.Trim());
+            FileInfo[] fil = dir.GetFiles();
+            if (fil.Length == 0)
+            {
+                MessageBox.Show("所选路径下没有文件，请重试！");
+                return;
+            }
+            type = "check";
+            thread = new Thread(new ThreadStart(this.ThreadProcSafePost));
+            thread.Start();
         }
     }
 }

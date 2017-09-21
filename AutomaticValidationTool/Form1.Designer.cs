@@ -36,6 +36,7 @@
             this.txtCheckDate = new System.Windows.Forms.DateTimePicker();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnStart
@@ -110,11 +111,23 @@
             this.label2.TabIndex = 23;
             this.label2.Text = "检查人员姓名：";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label1.ForeColor = System.Drawing.Color.Red;
+            this.label1.Location = new System.Drawing.Point(93, 161);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(269, 12);
+            this.label1.TabIndex = 27;
+            this.label1.Text = "提示：点击开始后需等待一会，操作完成会有提醒";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(416, 264);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtCheckName);
             this.Controls.Add(this.txtCheckDate);
             this.Controls.Add(this.label3);
@@ -140,6 +153,7 @@
         private System.Windows.Forms.DateTimePicker txtCheckDate;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
     }
 }
 

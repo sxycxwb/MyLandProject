@@ -100,9 +100,17 @@ namespace UtilityCode
                         PdfImportedPage importedPage = pdfWriter.GetImportedPage(pdfReader, nextpage);
                         rotation = pdfReader.GetPageRotation(nextpage);
                         pdfContentByte.AddTemplate(importedPage, 0, 0);
-                        if (rotation == 90 || rotation == 270)
+                        if (rotation == 90)
                         {
                             pdfContentByte.AddTemplate(importedPage, 0, -1f, 1f, 0, 0, pdfReader.GetPageSizeWithRotation(nextpage).Height);
+                        }
+                        else if (rotation == 180)
+                        {
+                            pdfContentByte.AddTemplate(importedPage, -1f, 0, 0, -1f, 0, pdfReader.GetPageSizeWithRotation(nextpage).Height);
+                        }
+                        else if (rotation == 270)
+                        {
+                            pdfContentByte.AddTemplate(importedPage, 0, 1f, -1f, 0, pdfReader.GetPageSizeWithRotation(nextpage).Width,0 );
                         }
                         else
                         {

@@ -43,6 +43,7 @@
             this.btnCopyErrorMsg = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.btnCheckGen = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // txtWorkPath
@@ -72,7 +73,7 @@
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(136, 27);
             this.btnStart.TabIndex = 15;
-            this.btnStart.Text = "开始生成";
+            this.btnStart.Text = "标准模板生成";
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
@@ -154,10 +155,10 @@
             // 
             // btnCopyErrorMsg
             // 
-            this.btnCopyErrorMsg.Location = new System.Drawing.Point(261, 223);
+            this.btnCopyErrorMsg.Location = new System.Drawing.Point(138, 223);
             this.btnCopyErrorMsg.Margin = new System.Windows.Forms.Padding(2);
             this.btnCopyErrorMsg.Name = "btnCopyErrorMsg";
-            this.btnCopyErrorMsg.Size = new System.Drawing.Size(136, 25);
+            this.btnCopyErrorMsg.Size = new System.Drawing.Size(95, 25);
             this.btnCopyErrorMsg.TabIndex = 25;
             this.btnCopyErrorMsg.Text = "复制错误信息";
             this.btnCopyErrorMsg.UseVisualStyleBackColor = true;
@@ -186,11 +187,23 @@
             this.comboBox1.TabIndex = 31;
             this.comboBox1.Text = "默认Doc模式";
             // 
+            // btnCheckGen
+            // 
+            this.btnCheckGen.Location = new System.Drawing.Point(261, 222);
+            this.btnCheckGen.Margin = new System.Windows.Forms.Padding(2);
+            this.btnCheckGen.Name = "btnCheckGen";
+            this.btnCheckGen.Size = new System.Drawing.Size(136, 27);
+            this.btnCheckGen.TabIndex = 32;
+            this.btnCheckGen.Text = "自检报告生成";
+            this.btnCheckGen.UseVisualStyleBackColor = true;
+            this.btnCheckGen.Click += new System.EventHandler(this.btnCheckGen_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(413, 419);
+            this.Controls.Add(this.btnCheckGen);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.btnCopyErrorMsg);
@@ -231,6 +244,7 @@
         private System.Windows.Forms.Button btnCopyErrorMsg;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Button btnCheckGen;
     }
 }
 

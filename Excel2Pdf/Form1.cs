@@ -25,6 +25,7 @@ namespace Excel2Pdf
 
         private string checkName = "";
         private string checkDate = "";
+        private string check = "";
 
         public Form1()
         {
@@ -37,8 +38,9 @@ namespace Excel2Pdf
                 dirNanme = CmdArgs[1].ToString();
                 checkName = CmdArgs[2];
                 checkDate = CmdArgs[3];
+                check = CmdArgs[4].ToString();
             }
-
+            //check = "check";
             //获取UI线程同步上下文
             m_SyncContext = SynchronizationContext.Current;
 
@@ -56,24 +58,35 @@ namespace Excel2Pdf
             string json = File.ReadAllText("coordinates.json");
             List<PlotModel> plotList = JsonToObj(json, typeof(List<PlotModel>)) as List<PlotModel>;
 
-            for (int i = 0; i < plotList.Count; i++)
+            #region 自检报告生成
+            if (check == "check")
             {
-                var plotModel = plotList[i];
-                ExecCoordinateExcel(plotModel);
-
-                //在线程中更新UI（通过UI线程同步上下文m_SyncContext）
-                m_SyncContext.Post(UpdateUIProcess, (i + 1) * 100 / plotList.Count);
+                ExecCoordinateCheckExcel(plotList);
             }
-            ExecCoordinateSummary(plotList);//生成汇总表
+            #endregion
 
-
-            if (MessageBox.Show(@"是否需要打开生成目录", "操作成功", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            #region 标准模板生成
+            else
             {
-                string makePath = GetGeneratePath("");
-                if (Directory.Exists(makePath))
-                    System.Diagnostics.Process.Start(makePath);
-                this.Close();
+                for (int i = 0; i < plotList.Count; i++)
+                {
+                    var plotModel = plotList[i];
+                    ExecCoordinateExcel(plotModel);
+
+                    //在线程中更新UI（通过UI线程同步上下文m_SyncContext）
+                    m_SyncContext.Post(UpdateUIProcess, (i + 1) * 100 / plotList.Count);
+                }
+                ExecCoordinateSummary(plotList);//生成汇总表
+
+                if (MessageBox.Show(@"是否需要打开生成目录", "操作成功", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                {
+                    string makePath = GetGeneratePath("");
+                    if (Directory.Exists(makePath))
+                        System.Diagnostics.Process.Start(makePath);
+                    this.Close();
+                }
             }
+            #endregion
         }
 
         /// <summary>
@@ -129,6 +142,115 @@ namespace Excel2Pdf
                 Directory.Delete(dirPath, true);
                 Directory.CreateDirectory(dirPath);
             }
+        }
+
+        private void ExecCoordinateCheckExcel(List<PlotModel> plotList)
+        {
+            Workbook workbook = new Workbook();
+            var tempetePath = AppDomain.CurrentDomain.BaseDirectory;
+            tempetePath = Path.Combine(tempetePath, "Templete", "templete4.xlsx");
+            workbook.LoadFromFile(tempetePath);
+            if (workbook.Worksheets.Count == 0)
+                return;
+          
+           
+
+            int rowIndex = 7;
+            var worksheet = workbook.Worksheets[0];
+            //表底信息
+            worksheet.Range["A14"].Text = worksheet.Range["A14"].Text + checkName;
+            worksheet.Range["H14"].Text = worksheet.Range["H14"].Text + checkDate;
+
+            var worksheet2 = workbook.Worksheets[1];
+            //表底信息
+            worksheet2.Range["A10"].Text = worksheet2.Range["A10"].Text + checkName;
+            worksheet2.Range["F10"].Text = worksheet2.Range["F10"].Text + checkDate;
+
+            worksheet2.InsertRow(5,plotList.Count-1);
+
+            //界址点中误差m
+            double sumM = 0;
+            int sumN = 0;
+            for (int i = 0; i < plotList.Count; i++)
+            {
+                var model = plotList[i];
+                #region 界址点数据
+
+                //模板中只有行，如果数据超过则需要增加行
+                int insertRowsCount = model.CoordinateList.Count;
+                worksheet.InsertRow((i == 0) ? rowIndex : rowIndex - 1, i == 0 ? insertRowsCount - 1 : insertRowsCount);
+                //为新增加行复制样式
+                for (int j = 0; j < insertRowsCount; j++)
+                {
+                    if (j == insertRowsCount - 1 && i == 0)
+                        break;
+                    int currentRow = ((i == 0) ? rowIndex : rowIndex - 1) + j;
+                    worksheet.SetRowHeight(currentRow, 18);
+                    worksheet.Copy(worksheet.Range["A6:L6"], worksheet.Range["A" + currentRow + ":L" + currentRow], true);
+                }
+                sumN += model.CoordinateList.Count;
+                //循环处理行数据
+                for (int j = 0; j < model.CoordinateList.Count; j++)
+                {
+                    var coordinate = model.CoordinateList[j];
+
+                    sumM += Convert.ToDouble(coordinate.difSquareL);
+
+                    int currentRowIndex = rowIndex + j - 1;
+                    worksheet.Range["A" + currentRowIndex].Text = (currentRowIndex - 5).ToString();
+                    worksheet.Range["B" + currentRowIndex].Text = model.PlotCode;
+                    worksheet.Range["C" + currentRowIndex].Text = coordinate.BoundaryPointNum;
+                    worksheet.Range["D" + currentRowIndex].Text = coordinate.X;
+                    worksheet.Range["E" + currentRowIndex].Text = coordinate.Y;
+                    worksheet.Range["F" + currentRowIndex].Text = coordinate.cX;
+                    worksheet.Range["G" + currentRowIndex].Text = coordinate.cY;
+                    worksheet.Range["H" + currentRowIndex].Text = coordinate.difX;
+                    worksheet.Range["I" + currentRowIndex].Text = coordinate.difY;
+                    worksheet.Range["J" + currentRowIndex].Text = coordinate.difL;
+                    worksheet.Range["K" + currentRowIndex].Text = coordinate.difSquareL;
+                    worksheet.Range["L" + currentRowIndex].Text = "";
+                }
+                rowIndex += insertRowsCount;
+
+                #endregion
+
+                #region 面积数据
+                int currentRowIndex2 = 4;
+
+                currentRowIndex2 += i;
+                if (i != 0)
+                {
+                    worksheet2.SetRowHeight(currentRowIndex2, 18);
+                    worksheet2.Copy(worksheet2.Range["A4:H4"], worksheet2.Range["A" + currentRowIndex2 + ":H" + currentRowIndex2], true);
+                }
+
+                worksheet2.Range["A" + currentRowIndex2].Text = (i + 1).ToString();
+                worksheet2.Range["B" + currentRowIndex2].Text = model.PlotCode;
+                worksheet2.Range["C" + currentRowIndex2].Text = model.PlotArea;
+                worksheet2.Range["D" + currentRowIndex2].Text = model.PlotCheckArea;
+                worksheet2.Range["E" + currentRowIndex2].Text = model.DifArea;
+                worksheet2.Range["F" + currentRowIndex2].Text = model.PercentageError + "%";
+
+                #endregion
+
+                //在线程中更新UI（通过UI线程同步上下文m_SyncContext）
+                m_SyncContext.Post(UpdateUIProcess, (i + 1) * 100 / plotList.Count);
+            }
+
+            //计算界址点中误差m sqrt（∑[△L²]/2n）
+            string m = Math.Sqrt(sumM / (2 * sumN)).ToString("f3");
+            worksheet.Range["E" + (rowIndex-1)].Text = m;
+
+            string generatePath = GetGeneratePath("");
+            if (!Directory.Exists(generatePath))
+                Directory.CreateDirectory(generatePath);
+            var dict = GetConfigDict("JZD");
+            var zjdCode = dict.Keys.First();
+
+            generatePath = Path.Combine(generatePath, "自检报告", "自检报告");//每个生成的文件放到对应组号下面
+
+            workbook.SaveToFile(generatePath + ".xlsx", ExcelVersion.Version2010);
+
         }
         /// <summary>
         /// 操作填充界址点检查记录表 与面积检查记录表
