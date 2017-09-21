@@ -147,7 +147,7 @@ namespace GenerateTools
                 showInfo = "采集数据完成，工采集【" + plotList.Count + "】条数据；\r\n发现错误文件，是否打开错误文件目录，同时继续生成无错误PDF文件？";
             }
             if (
-                MessageBox.Show(showInfo, "采集数据完成",MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==DialogResult.OK)
+                MessageBox.Show(showInfo, "采集数据完成", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
                 var dirName = txtWorkPath.Text.Trim().Substring(txtWorkPath.Text.Trim().LastIndexOf(@"\") + 1);
 
@@ -180,7 +180,7 @@ namespace GenerateTools
                                                     //获得文件夹名称
 
                 //传递的参数 参数1：文件夹名称 参数2：检查人姓名 参数3：检查日期 参数4：生成类型
-                p.StartInfo.Arguments = dirName.Trim().Replace(" ", "") + " " + txtCheckName.Text.Trim() + " " + Convert.ToDateTime(txtCheckDate.Text).ToString("yyyy年MM月dd日")+" "+type;
+                p.StartInfo.Arguments = dirName.Trim().Replace(" ", "") + " " + txtCheckName.Text.Trim() + " " + Convert.ToDateTime(txtCheckDate.Text).ToString("yyyy年MM月dd日") + " " + type;
                 p.Start(); //启动  
             }
             else
@@ -413,11 +413,8 @@ namespace GenerateTools
                     model.IsGenerate = false;
                     return;
                 }
-                //最后判断如果 误差>5则重新计算
-                if (Convert.ToDouble(model.PercentageError) >= 5)
-                    SetPlotModel_DOC(model, filePath, true);
-                //如果计算界址点中误差>=0.4则重新计算
-                if (Convert.ToDouble(model.PlotM) >= 0.4)
+                //最后判断如果 误差>5  或计算界址点中误差>=0.4  或面积P与P'相同  或面积差小于零    则重新计算
+                if (Convert.ToDouble(model.PercentageError) >= 5 || Convert.ToDouble(model.PlotM) >= 0.4 || model.PlotArea == model.PlotCheckArea || Convert.ToDouble(model.DifArea) < 0)
                     SetPlotModel_DOC(model, filePath, true);
                 //standM = GetStandM();
                 calcCount = 0;
@@ -664,12 +661,10 @@ namespace GenerateTools
                     model.IsGenerate = false;
                     return;
                 }
-                //最后判断如果 误差>5则重新计算
-                if (Convert.ToDouble(model.PercentageError) >= 5)
+                //最后判断如果 误差>5  或计算界址点中误差>=0.4  或面积P与P'相同  或面积差小于零    则重新计算
+                if (Convert.ToDouble(model.PercentageError) >= 5 || Convert.ToDouble(model.PlotM) >= 0.4 || model.PlotArea == model.PlotCheckArea || Convert.ToDouble(model.DifArea) < 0)
                     SetPlotModel_EXCEL(model, filePath, true);
-                //如果计算界址点中误差>=0.4则重新计算
-                if (Convert.ToDouble(model.PlotM) >= 0.4)
-                    SetPlotModel_EXCEL(model, filePath, true);
+
                 //standM = GetStandM();
                 calcCount = 0;
                 return;
