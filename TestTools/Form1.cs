@@ -133,5 +133,10 @@ namespace TestTools
             string regCode = Convert.ToBase64String(bytes);
             txtRegCode.Text = regCode;
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
