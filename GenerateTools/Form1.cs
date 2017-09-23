@@ -73,7 +73,7 @@ namespace GenerateTools
                 MessageBox.Show("所选路径下没有文件，请重试！");
                 return;
             }
-
+            type = "normal";
             thread = new Thread(new ThreadStart(this.ThreadProcSafePost));
             thread.Start();
         }

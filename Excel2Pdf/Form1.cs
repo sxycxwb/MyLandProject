@@ -34,11 +34,19 @@ namespace Excel2Pdf
             String[] CmdArgs = System.Environment.GetCommandLineArgs();
             if (CmdArgs.Length >= 2)
             {
-                //参数0是它本身的路径
-                dirNanme = CmdArgs[1].ToString();
-                checkName = CmdArgs[2];
-                checkDate = CmdArgs[3];
-                check = CmdArgs[4].ToString();
+                try
+                {
+
+                    //参数0是它本身的路径
+                    dirNanme = CmdArgs[1].ToString();
+                    checkName = CmdArgs[2];
+                    checkDate = CmdArgs[3];
+                    check = CmdArgs[4].ToString();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
             //check = "check";
             //获取UI线程同步上下文
@@ -152,8 +160,8 @@ namespace Excel2Pdf
             workbook.LoadFromFile(tempetePath);
             if (workbook.Worksheets.Count == 0)
                 return;
-          
-           
+
+
 
             int rowIndex = 7;
             var worksheet = workbook.Worksheets[0];
@@ -166,7 +174,7 @@ namespace Excel2Pdf
             worksheet2.Range["A10"].Text = worksheet2.Range["A10"].Text + checkName;
             worksheet2.Range["F10"].Text = worksheet2.Range["F10"].Text + checkDate;
 
-            worksheet2.InsertRow(5,plotList.Count-1);
+            worksheet2.InsertRow(5, plotList.Count - 1);
 
             //界址点中误差m
             double sumM = 0;
@@ -239,7 +247,7 @@ namespace Excel2Pdf
 
             //计算界址点中误差m sqrt（∑[△L²]/2n）
             string m = Math.Sqrt(sumM / (2 * sumN)).ToString("f3");
-            worksheet.Range["E" + (rowIndex-1)].Text = m;
+            worksheet.Range["E" + (rowIndex - 1)].Text = m;
 
             string generatePath = GetGeneratePath("");
             if (!Directory.Exists(generatePath))
