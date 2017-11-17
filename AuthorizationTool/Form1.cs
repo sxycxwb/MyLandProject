@@ -57,7 +57,7 @@ namespace AuthorizationTool
                 {
                     sb.AppendLine(EncryptUtil.AesStr(str, keyVal, ivVal));
                 }
-                string filePath = Path.Combine(txtCombinePath.Text.Trim(), "Spire.Pdf.dll");
+                string filePath = Path.Combine(txtCombinePath.Text.Trim(), "Spire.Excel.dll");
                 if (File.Exists(filePath))
                     File.Delete(filePath);
 

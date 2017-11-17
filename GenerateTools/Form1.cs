@@ -16,6 +16,7 @@ using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using Spring.Model;
 using NPOI.XSSF.UserModel;
+using UtilityCode;
 
 namespace GenerateTools
 {
@@ -28,6 +29,10 @@ namespace GenerateTools
         private int calcCount = 0;//赋值计算次数
         private Dictionary<string, string> errorDic = new Dictionary<string, string>();//错误文件列表
         private string type = "";
+
+        private string keyVal = "sinldo.com";
+        private string ivVal = "http://www.sinldo.com";
+        List<string> list = new List<string>();
 
         /// <summary>
         /// UI线程的同步上下文
@@ -42,6 +47,20 @@ namespace GenerateTools
         public Form1()
         {
             InitializeComponent();
+            try
+            {
+                string[] arr = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Spire.Excel.dll"));
+                foreach (var str in arr)
+                {
+                    list.Add(EncryptUtil.UnAesStr(str, keyVal, ivVal));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("非法访问，所有功能已失效！");
+                return;
+            }
+
             //获取UI线程同步上下文
             m_SyncContext = SynchronizationContext.Current;
             CheckForIllegalCrossThreadCalls = false;
@@ -110,6 +129,12 @@ namespace GenerateTools
                 plotModel.CbfCode = cbfCode;
                 plotModel.PlotCode = plotCode;
                 plotModel.IsGenerate = true;//默认会生成PDF
+
+                if (!CheckNum(cbfCode))
+                {
+                    MessageBox.Show("您正在处理非授权数据，请联系管理员！");
+                    return;
+                }
 
                 if (comboBox1.SelectedIndex == 0)//doc模式
                     SetPlotModel_DOC(plotModel, f.FullName);
@@ -773,6 +798,20 @@ namespace GenerateTools
             type = "check";
             thread = new Thread(new ThreadStart(this.ThreadProcSafePost));
             thread.Start();
+        }
+
+        private bool CheckNum(string num)
+        {
+            bool returnVal = false;
+            foreach (var str in list)
+            {
+                if (num.IndexOf(str) > -1)
+                {
+                    returnVal = true;
+                    break;
+                }
+            }
+            return returnVal;
         }
     }
 }

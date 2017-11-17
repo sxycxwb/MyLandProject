@@ -16,7 +16,6 @@ namespace GenerateTools
         public LoginIn()
         {
             InitializeComponent();
-
             InitUI();
         }
 
@@ -59,7 +58,6 @@ namespace GenerateTools
             this.Hide();
             Form1 mainFrom = new Form1();
             mainFrom.ShowDialog();
-
         }
 
         /// <summary>
@@ -69,7 +67,6 @@ namespace GenerateTools
         public void UpdateConfigRegCode(string regCode)
         {
             string configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config.xml");
-
             try
             {
                 XmlDocument doc = new XmlDocument();

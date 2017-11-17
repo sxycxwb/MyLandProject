@@ -129,6 +129,10 @@
       <Project>{195c497a-da7c-41b6-82dd-aab3875a4068}</Project>
       <Name>Spring.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UtilityCode\UtilityCode.csproj">
+      <Project>{05b348d9-e292-4aea-bde4-56ddda725599}</Project>
+      <Name>UtilityCode</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Config.xml">

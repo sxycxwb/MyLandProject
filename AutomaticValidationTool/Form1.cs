@@ -24,7 +24,7 @@ namespace AutomaticValidationTool
             InitializeComponent();
             try
             {
-                string[] arr = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Spire.Pdf.dll"));
+                string[] arr = File.ReadAllLines(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Spire.Excel.dll"));
                 foreach (var str in arr)
                 {
                     list.Add(EncryptUtil.UnAesStr(str, keyVal, ivVal));
