@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthorizationTool", "Author
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomaticValidationTool", "AutomaticValidationTool\AutomaticValidationTool.csproj", "{FAE10B9C-B66E-4A0B-86B9-17A9E469C929}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangePic", "ChangePic\ChangePic.csproj", "{102FD977-91FD-4261-B6C9-90C69FE61FE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{FAE10B9C-B66E-4A0B-86B9-17A9E469C929}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAE10B9C-B66E-4A0B-86B9-17A9E469C929}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAE10B9C-B66E-4A0B-86B9-17A9E469C929}.Release|Any CPU.Build.0 = Release|Any CPU
+		{102FD977-91FD-4261-B6C9-90C69FE61FE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{102FD977-91FD-4261-B6C9-90C69FE61FE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{102FD977-91FD-4261-B6C9-90C69FE61FE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{102FD977-91FD-4261-B6C9-90C69FE61FE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

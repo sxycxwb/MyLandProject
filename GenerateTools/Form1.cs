@@ -144,7 +144,7 @@ namespace GenerateTools
                 if (!errorDic.ContainsKey(plotModel.PlotCode))
                     plotList.Add(plotModel);
 
-                m_SyncContext.Post(UpdateUIProcess, currentIndex * 100 / totalCount);
+                m_SyncContext.Post(UpdateUIProcess  , currentIndex * 100 / totalCount);
             }
             //将结果集持久化保存json
             string json = JsonConvert.SerializeObject(plotList);
