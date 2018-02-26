@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutomaticValidationTool", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangePic", "ChangePic\ChangePic.csproj", "{102FD977-91FD-4261-B6C9-90C69FE61FE4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfirmationTable", "ConfirmationTable\ConfirmationTable.csproj", "{959BAE55-6E31-42E1-9C59-7F2E7D350577}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{102FD977-91FD-4261-B6C9-90C69FE61FE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{102FD977-91FD-4261-B6C9-90C69FE61FE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{102FD977-91FD-4261-B6C9-90C69FE61FE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{959BAE55-6E31-42E1-9C59-7F2E7D350577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{959BAE55-6E31-42E1-9C59-7F2E7D350577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{959BAE55-6E31-42E1-9C59-7F2E7D350577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{959BAE55-6E31-42E1-9C59-7F2E7D350577}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
