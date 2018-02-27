@@ -160,8 +160,9 @@ namespace ConfirmationTable
                 #region 合并格
                 worksheet.Range["A" + startRowIndex + ":S" + startRowIndex].Merge();
                 worksheet.Range["A" + (startRowIndex + 1) + ":G" + (startRowIndex + 1)].Merge();//单位
-                worksheet.Range["H" + (startRowIndex + 1) + ":J" + (startRowIndex + 1)].Merge();//日期
-                worksheet.Range["K" + (startRowIndex + 1) + ":S" + (startRowIndex + 1)].Merge();//户号
+                worksheet.Range["H" + (startRowIndex + 1) + ":N" + (startRowIndex + 1)].Merge();//发包方编码
+                worksheet.Range["O" + (startRowIndex + 1) + ":Q" + (startRowIndex + 1)].Merge();//日期
+                worksheet.Range["R" + (startRowIndex + 1) + ":S" + (startRowIndex + 1)].Merge();//户号
                 worksheet.Range["A" + (startRowIndex + 2) + ":A" + (startRowIndex + 4)].Merge();//承包方  
                 worksheet.Range["B" + (startRowIndex + 3) + ":B" + (startRowIndex + 4)].Merge();
                 worksheet.Range["C" + (startRowIndex + 3) + ":C" + (startRowIndex + 4)].Merge();
@@ -204,8 +205,9 @@ namespace ConfirmationTable
                 int startRowIndex = d * everyTableRows + 1;
 
                 worksheet.Range["A" + (startRowIndex + 1)].Text = "单位：" + dt.TableName; //单位
-                worksheet.Range["H" + (startRowIndex + 1)].Text = "日期：" + nowDate;//日期
-                worksheet.Range["K" + (startRowIndex + 1)].Text = "户号：" + rows[0]["HH"].ToString();//户号
+                worksheet.Range["H" + (startRowIndex + 1)].Text = "发包方编码：" + model.CBFBM;//发包方编码
+                worksheet.Range["O" + (startRowIndex + 1)].Text = "日期：" + nowDate;//日期
+                worksheet.Range["R" + (startRowIndex + 1)].Text = "户号：" + rows[0]["HH"].ToString();//户号
                 var dkCount = Convert.ToInt32(rows[0]["DKNUM"].ToString());//地块数目
                 var xxCount = Convert.ToInt32(rows[0]["MEMBERS"].ToString());//家庭人员数量
 
@@ -219,11 +221,11 @@ namespace ConfirmationTable
 
                 //合同编号
                 worksheet.Range["H" + (startRowIndex + 5) + ":H" + (startRowIndex + 5 + (dkCount > 0 ? dkCount - 1 : 0))].Merge();
-                worksheet.Range["H" + (startRowIndex + 5)].Text = rows[0]["HTBH"].ToString();
+                worksheet.Range["H" + (startRowIndex + 5)].Text = rows[0]["HTBH"].ToString().Substring(14, rows[0]["HTBH"].ToString().Length - 14);
 
                 //权证编号
                 worksheet.Range["I" + (startRowIndex + 5) + ":I" + (startRowIndex + 5 + (dkCount > 0 ? dkCount - 1 : 0))].Merge();
-                worksheet.Range["I" + (startRowIndex + 5)].Text = rows[0]["QZBH"].ToString();
+                worksheet.Range["I" + (startRowIndex + 5)].Text = rows[0]["QZBH"].ToString().Substring(14, rows[0]["QZBH"].ToString().Length - 14);
 
                 //合同总面积
                 worksheet.Range["L" + (startRowIndex + 5) + ":L" + (startRowIndex + 5 + (dkCount > 0 ? dkCount - 1 : 0))].Merge();
@@ -245,14 +247,14 @@ namespace ConfirmationTable
                         worksheet.Range["E" + i].Text = rows[rowsIndex]["AGE"].ToString();
                         worksheet.Range["F" + i].Text = rows[rowsIndex]["IDNO"].ToString();
                         worksheet.Range["G" + i].Text = rows[rowsIndex]["YHZGX"].ToString();
-                        worksheet.Range["J" + i].Text = rows[rowsIndex]["DKBM"].ToString();
+                        worksheet.Range["J" + i].Text = string.IsNullOrEmpty(rows[rowsIndex]["DKBM"].ToString()) ? "" : rows[rowsIndex]["DKBM"].ToString().Substring(14, rows[rowsIndex]["DKBM"].ToString().Length - 14);
                         worksheet.Range["K" + i].Text = rows[rowsIndex]["DKMC"].ToString();
                         worksheet.Range["M" + i].Text = rows[rowsIndex]["HTMJ"].ToString();
                         worksheet.Range["O" + i].Text = rows[rowsIndex]["SCMJ"].ToString();
-                        worksheet.Range["P" + i].Text = rows[rowsIndex]["DKDZ"].ToString();
-                        worksheet.Range["Q" + i].Text = rows[rowsIndex]["DKNZ"].ToString();
-                        worksheet.Range["R" + i].Text = rows[rowsIndex]["DKXZ"].ToString();
-                        worksheet.Range["S" + i].Text = rows[rowsIndex]["DKBZ"].ToString();
+                        worksheet.Range["P" + i].Text = CutStr(rows[rowsIndex]["DKDZ"].ToString());
+                        worksheet.Range["Q" + i].Text = CutStr(rows[rowsIndex]["DKNZ"].ToString());
+                        worksheet.Range["R" + i].Text = CutStr(rows[rowsIndex]["DKXZ"].ToString());
+                        worksheet.Range["S" + i].Text = CutStr(rows[rowsIndex]["DKBZ"].ToString());
                     }
                     rowsIndex++;
                 }
@@ -271,8 +273,9 @@ namespace ConfirmationTable
                 int startRowIndex = d * everyTableRows + 1;
 
                 worksheet.Range["A" + (startRowIndex + 1)].Text = "单位：" + txtDWMC.Text.Trim(); //单位
-                worksheet.Range["H" + (startRowIndex + 1)].Text = "日期：" + nowDate;//日期
-                worksheet.Range["K" + (startRowIndex + 1)].Text = "户号：" + rows[0]["HH"].ToString();//户号
+                worksheet.Range["H" + (startRowIndex + 1)].Text = "发包方编码：" + model.CBFBM;//发包方编码
+                worksheet.Range["O" + (startRowIndex + 1)].Text = "日期：" + nowDate;//日期
+                worksheet.Range["R" + (startRowIndex + 1)].Text = "户号：" + rows[0]["HH"].ToString();//户号
                 var dkCount = Convert.ToInt32(rows[0]["DKNUM"].ToString());//地块数目
                 var xxCount = Convert.ToInt32(rows[0]["MEMBERS"].ToString());//家庭人员数量
 
@@ -286,11 +289,11 @@ namespace ConfirmationTable
 
                 //合同编号
                 worksheet.Range["H" + (startRowIndex + 5) + ":H" + (startRowIndex + 5 + 19)].Merge();
-                worksheet.Range["H" + (startRowIndex + 5)].Text = rows[0]["HTBH"].ToString();
+                worksheet.Range["H" + (startRowIndex + 5)].Text = rows[0]["HTBH"].ToString().Substring(14, rows[0]["HTBH"].ToString().Length - 14);
 
                 //权证编号
                 worksheet.Range["I" + (startRowIndex + 5) + ":I" + (startRowIndex + 5 + 19)].Merge();
-                worksheet.Range["I" + (startRowIndex + 5)].Text = rows[0]["QZBH"].ToString();
+                worksheet.Range["I" + (startRowIndex + 5)].Text = rows[0]["QZBH"].ToString().Substring(14, rows[0]["QZBH"].ToString().Length - 14);
 
                 //合同总面积
                 worksheet.Range["L" + (startRowIndex + 5) + ":L" + (startRowIndex + 5 + 19)].Merge();
@@ -312,14 +315,14 @@ namespace ConfirmationTable
                         worksheet.Range["E" + i].Text = rows[rowsIndex]["AGE"].ToString();
                         worksheet.Range["F" + i].Text = rows[rowsIndex]["IDNO"].ToString();
                         worksheet.Range["G" + i].Text = rows[rowsIndex]["YHZGX"].ToString();
-                        worksheet.Range["J" + i].Text = rows[rowsIndex]["DKBM"].ToString();
+                        worksheet.Range["J" + i].Text = string.IsNullOrEmpty(rows[rowsIndex]["DKBM"].ToString()) ? "" : rows[rowsIndex]["DKBM"].ToString().Substring(14, rows[rowsIndex]["DKBM"].ToString().Length - 14);
                         worksheet.Range["K" + i].Text = rows[rowsIndex]["DKMC"].ToString();
                         worksheet.Range["M" + i].Text = rows[rowsIndex]["HTMJ"].ToString();
                         worksheet.Range["O" + i].Text = rows[rowsIndex]["SCMJ"].ToString();
-                        worksheet.Range["P" + i].Text = rows[rowsIndex]["DKDZ"].ToString();
-                        worksheet.Range["Q" + i].Text = rows[rowsIndex]["DKNZ"].ToString();
-                        worksheet.Range["R" + i].Text = rows[rowsIndex]["DKXZ"].ToString();
-                        worksheet.Range["S" + i].Text = rows[rowsIndex]["DKBZ"].ToString();
+                        worksheet.Range["P" + i].Text = CutStr(rows[rowsIndex]["DKDZ"].ToString());
+                        worksheet.Range["Q" + i].Text = CutStr(rows[rowsIndex]["DKNZ"].ToString());
+                        worksheet.Range["R" + i].Text = CutStr(rows[rowsIndex]["DKXZ"].ToString());
+                        worksheet.Range["S" + i].Text = CutStr(rows[rowsIndex]["DKBZ"].ToString());
                     }
                     rowsIndex++;
                 }
@@ -329,8 +332,9 @@ namespace ConfirmationTable
                 startRowIndex = d * everyTableRows + 1;
 
                 worksheet.Range["A" + (startRowIndex + 1)].Text = "单位：" + txtDWMC.Text.Trim(); //单位
-                worksheet.Range["H" + (startRowIndex + 1)].Text = "日期：" + nowDate;//日期
-                worksheet.Range["K" + (startRowIndex + 1)].Text = "户号：" + rows[0]["HH"].ToString();//户号
+                worksheet.Range["H" + (startRowIndex + 1)].Text = "发包方编码：" + model.CBFBM;//发包方编码
+                worksheet.Range["O" + (startRowIndex + 1)].Text = "日期：" + nowDate;//日期
+                worksheet.Range["R" + (startRowIndex + 1)].Text = "户号：" + rows[0]["HH"].ToString();//户号
 
                 //承包方合并赋值
                 worksheet.Range["A" + (startRowIndex + 5) + ":A" + (startRowIndex + 5 + (xxCount > 0 ? xxCount - 1 : 0))].Merge();
@@ -342,11 +346,11 @@ namespace ConfirmationTable
 
                 //合同编号
                 worksheet.Range["H" + (startRowIndex + 5) + ":H" + (startRowIndex + 5 + dkCount - 21)].Merge();
-                worksheet.Range["H" + (startRowIndex + 5)].Text = rows[0]["HTBH"].ToString();
+                worksheet.Range["H" + (startRowIndex + 5)].Text = rows[0]["HTBH"].ToString().Substring(14, rows[0]["HTBH"].ToString().Length - 14);
 
                 //权证编号
                 worksheet.Range["I" + (startRowIndex + 5) + ":I" + (startRowIndex + 5 + dkCount - 21)].Merge();
-                worksheet.Range["I" + (startRowIndex + 5)].Text = rows[0]["QZBH"].ToString();
+                worksheet.Range["I" + (startRowIndex + 5)].Text = rows[0]["QZBH"].ToString().Substring(14, rows[0]["QZBH"].ToString().Length - 14);
 
                 //合同总面积
                 worksheet.Range["L" + (startRowIndex + 5) + ":L" + (startRowIndex + 5 + dkCount - 21)].Merge();
@@ -368,14 +372,14 @@ namespace ConfirmationTable
                         worksheet.Range["E" + i].Text = rows[rowsIndex]["AGE"].ToString();
                         worksheet.Range["F" + i].Text = rows[rowsIndex]["IDNO"].ToString();
                         worksheet.Range["G" + i].Text = rows[rowsIndex]["YHZGX"].ToString();
-                        worksheet.Range["J" + i].Text = rows[rowsIndex]["DKBM"].ToString();
+                        worksheet.Range["J" + i].Text = string.IsNullOrEmpty(rows[rowsIndex]["DKBM"].ToString()) ? "" : rows[rowsIndex]["DKBM"].ToString().Substring(14, rows[rowsIndex]["DKBM"].ToString().Length - 14);
                         worksheet.Range["K" + i].Text = rows[rowsIndex]["DKMC"].ToString();
                         worksheet.Range["M" + i].Text = rows[rowsIndex]["HTMJ"].ToString();
                         worksheet.Range["O" + i].Text = rows[rowsIndex]["SCMJ"].ToString();
-                        worksheet.Range["P" + i].Text = rows[rowsIndex]["DKDZ"].ToString();
-                        worksheet.Range["Q" + i].Text = rows[rowsIndex]["DKNZ"].ToString();
-                        worksheet.Range["R" + i].Text = rows[rowsIndex]["DKXZ"].ToString();
-                        worksheet.Range["S" + i].Text = rows[rowsIndex]["DKBZ"].ToString();
+                        worksheet.Range["P" + i].Text = CutStr(rows[rowsIndex]["DKDZ"].ToString());
+                        worksheet.Range["Q" + i].Text = CutStr(rows[rowsIndex]["DKNZ"].ToString());
+                        worksheet.Range["R" + i].Text = CutStr(rows[rowsIndex]["DKXZ"].ToString());
+                        worksheet.Range["S" + i].Text = CutStr(rows[rowsIndex]["DKBZ"].ToString());
                     }
                     rowsIndex++;
                 }
@@ -383,6 +387,21 @@ namespace ConfirmationTable
             }
 
             #endregion
+        }
+
+        private string CutStr(string str)
+        {
+            int index = str.IndexOf("，");
+            if (index > -1)
+                str = str.Substring(index + 2, str.Length - index - 2);
+
+            else
+            {
+                index = str.IndexOf(",");
+                if (index > -1)
+                    str = str.Substring(index + 2, str.Length - index - 2);
+            }
+            return str;
         }
 
         private DataSet GetNewDs(DataTable dk_dt, DataTable xx_dt, DataTable fbf_dt)
