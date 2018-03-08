@@ -74,7 +74,8 @@ namespace ConfirmationTable
             var fbf_dt = accessHelper.ExecuteDataTable("select FBFBM,FBFMC from FBF ");
             var dk_dt = accessHelper.ExecuteDataTable("select FBFBM,CBFBM,CBFMC,DKBM,DKMC,HTMJ,SCMJ,DKDZ,DKNZ,DKXZ,DKBZ from CBDKDC ORDER BY FBFBM,CBFBM");
             var xx_dt = accessHelper.ExecuteDataTable("select CBFBM,CYXM,CYXB,CSRQ,CYZJHM,YHZGX from CBF_JTCY ");
-            var ds = GetNewDs(dk_dt, xx_dt, fbf_dt);
+            var ht_dt = accessHelper.ExecuteDataTable("select CBFBM,HTZMJ,YHTZMJ from CBHT ");
+            var ds = GetNewDs(dk_dt, xx_dt, fbf_dt, ht_dt);
 
             Workbook workbook = new Workbook();
             var tempetePath = AppDomain.CurrentDomain.BaseDirectory;
@@ -117,7 +118,8 @@ namespace ConfirmationTable
         private void GenDt(Workbook workbook, DataTable dt, int sheetIndex)
         {
             int totalSheetCount = workbook.Worksheets.Count;
-
+            if (dt.Rows.Count == 0)
+                return;
             var nowDate = Convert.ToDateTime(txtSelectDate.Text).ToString("yyyy年MM月dd日");
             var query = from t in dt.AsEnumerable()
                         group t by new { CBFBM = t.Field<string>("CBFBM") } into m
@@ -205,7 +207,7 @@ namespace ConfirmationTable
                 int startRowIndex = d * everyTableRows + 1;
 
                 worksheet.Range["A" + (startRowIndex + 1)].Text = "单位：" + dt.TableName; //单位
-                worksheet.Range["H" + (startRowIndex + 1)].Text = "发包方编码：" + model.CBFBM;//发包方编码
+                worksheet.Range["H" + (startRowIndex + 1)].Text = "承包方编码：" + model.CBFBM;//发包方编码
                 worksheet.Range["O" + (startRowIndex + 1)].Text = "日期：" + nowDate;//日期
                 worksheet.Range["R" + (startRowIndex + 1)].Text = "户号：" + rows[0]["HH"].ToString();//户号
                 var dkCount = Convert.ToInt32(rows[0]["DKNUM"].ToString());//地块数目
@@ -273,7 +275,7 @@ namespace ConfirmationTable
                 int startRowIndex = d * everyTableRows + 1;
 
                 worksheet.Range["A" + (startRowIndex + 1)].Text = "单位：" + txtDWMC.Text.Trim(); //单位
-                worksheet.Range["H" + (startRowIndex + 1)].Text = "发包方编码：" + model.CBFBM;//发包方编码
+                worksheet.Range["H" + (startRowIndex + 1)].Text = "承包方编码：" + model.CBFBM;//发包方编码
                 worksheet.Range["O" + (startRowIndex + 1)].Text = "日期：" + nowDate;//日期
                 worksheet.Range["R" + (startRowIndex + 1)].Text = "户号：" + rows[0]["HH"].ToString();//户号
                 var dkCount = Convert.ToInt32(rows[0]["DKNUM"].ToString());//地块数目
@@ -332,7 +334,7 @@ namespace ConfirmationTable
                 startRowIndex = d * everyTableRows + 1;
 
                 worksheet.Range["A" + (startRowIndex + 1)].Text = "单位：" + txtDWMC.Text.Trim(); //单位
-                worksheet.Range["H" + (startRowIndex + 1)].Text = "发包方编码：" + model.CBFBM;//发包方编码
+                worksheet.Range["H" + (startRowIndex + 1)].Text = "承包方编码：" + model.CBFBM;//发包方编码
                 worksheet.Range["O" + (startRowIndex + 1)].Text = "日期：" + nowDate;//日期
                 worksheet.Range["R" + (startRowIndex + 1)].Text = "户号：" + rows[0]["HH"].ToString();//户号
 
@@ -404,7 +406,7 @@ namespace ConfirmationTable
             return str;
         }
 
-        private DataSet GetNewDs(DataTable dk_dt, DataTable xx_dt, DataTable fbf_dt)
+        private DataSet GetNewDs(DataTable dk_dt, DataTable xx_dt, DataTable fbf_dt, DataTable ht_dt)
         {
             DataSet newDs = new DataSet();
 
@@ -429,6 +431,11 @@ namespace ConfirmationTable
                         return null;
                     }
 
+                    //机动地判断
+                    string lastCode = currentCBFBM.Substring(currentCBFBM.Length - 4);
+                    if (lastCode == "9001")
+                        continue;
+
                     if (currentCBFBM == oldCBFBM)
                         continue;
 
@@ -437,9 +444,11 @@ namespace ConfirmationTable
                     var xxRows = xx_dt.Select("CBFBM='" + currentCBFBM + "'");
                     var dkCount = dkRows.Length;//地块数目
                     var xxCount = xxRows.Length;//家庭人员数量
-                    var totalHTMJ = GetTotalArea(dkRows, "HTMJ").ToString("0.00");
-                    var totalSCMJ = GetTotalArea(dkRows, "SCMJ", true).ToString("0.00");
-
+                    var tHTMJRows = ht_dt.Select("CBFBM='" + currentCBFBM + "'");
+                    //var totalHTMJ = GetTotalArea(dkRows, "HTMJ").ToString("0.00");
+                    //var totalSCMJ = GetTotalArea(dkRows, "SCMJ", true).ToString("0.00");
+                    var totalHTMJ = tHTMJRows.Length == 0 ? "0" : GetAcres(tHTMJRows[0]["YHTZMJ"].ToString()).ToString("0.00");
+                    var totalSCMJ = tHTMJRows.Length == 0 ? "0" : GetAcres(tHTMJRows[0]["HTZMJ"].ToString()).ToString("0.00");
                     int newRowsCount = dkCount > xxCount ? dkCount : xxCount;
                     for (int j = 0; j < newRowsCount; j++)
                     {
