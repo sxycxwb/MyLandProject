@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChangePic", "ChangePic\Chan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfirmationTable", "ConfirmationTable\ConfirmationTable.csproj", "{959BAE55-6E31-42E1-9C59-7F2E7D350577}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintTools", "PrintTools\PrintTools.csproj", "{6C72F25F-75A0-44D8-A0B8-53040CE79FD7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{959BAE55-6E31-42E1-9C59-7F2E7D350577}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{959BAE55-6E31-42E1-9C59-7F2E7D350577}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{959BAE55-6E31-42E1-9C59-7F2E7D350577}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C72F25F-75A0-44D8-A0B8-53040CE79FD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C72F25F-75A0-44D8-A0B8-53040CE79FD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C72F25F-75A0-44D8-A0B8-53040CE79FD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C72F25F-75A0-44D8-A0B8-53040CE79FD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
